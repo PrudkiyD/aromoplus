@@ -1,0 +1,47 @@
+.section-container {
+    display: flex;
+    flex-direction: column;
+    margin:20px;
+    padding: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    }
+
+    .section-container h3{
+        margin:0px;
+        margin-bottom: 20px;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    .input-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: grey;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .input-button:hover {
+        background-color: grey;
+    }
+
+    .input-field::placeholder {
+        color: #aaa;
+    }
+
+    .input-field:focus {
+        outline: none;
+        border-color: grey;
+        box-shadow: 0 0 5px grey;
+    }

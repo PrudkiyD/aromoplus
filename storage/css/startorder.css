@@ -1,0 +1,109 @@
+.choices{
+        margin:0px;
+    }
+
+    .choices__item{
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+
+    .nova{
+        width: 100%;
+    }
+
+    .nova select{
+       width: 100%;
+    }
+
+    .nova input{
+       width: 100%;
+    }
+
+    .chekoutform{
+        width: 40%;
+    }
+
+    .basketBlock{
+        position: static;
+        background-color: #f4f4f400;
+        padding: 0px;
+        padding-left: 10px;
+        transition: all 1s ease-in-out;
+        top: 0;
+        right: -1500px;
+        z-index: 1;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        overflow: auto;
+        overflow-x: hidden;
+        border-left: 1px solid rgba(128, 128, 128, 0.344) ;
+    }
+    .basketBlock h3{
+        margin: 0px;
+    }
+
+    .chekoutform h3{
+        margin: 0px;
+    }
+
+    .basket-list li{
+        background-color: rgb(252, 252, 252);
+        border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    }
+
+    .totalBloc{
+        margin: 0px;
+    }
+
+    .city_ref{
+        width: 100%;
+        position: relative;
+    }
+
+    .city_ref input{
+        width: 100%;
+        
+    }
+
+    .city_result{
+        width: 80%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-top: 35px;
+        background-color: white;
+        border: 1px solid gray;
+        padding-left: 20px;
+        font-size: 13px;
+    }
+
+    .city_result li{
+        list-style: none;
+    }
+
+
+    .warehouse_ref{
+        width: 100%;
+    }
+
+    .warehouse_ref input{
+        width: 100%;
+
+    }
+
+    
+    
+    
+
+    @media (max-width: 767px){
+        .chekoutform{
+            width: 100%;
+        }
+
+        .basketBlock{
+            width: 100%;
+        }
+    }

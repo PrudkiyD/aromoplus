@@ -1,0 +1,52 @@
+# Dependencies
+/laravel/vendor/
+/laravel/node_modules/
+
+# Environment
+/laravel/.env
+
+# Laravel specific
+/laravel/bootstrap/cache/
+/laravel/storage/app/
+/laravel/storage/framework/cache/
+/laravel/storage/framework/sessions/
+/laravel/storage/framework/views/
+/laravel/storage/logs/
+
+# Public compiled assets
+/laravel/public/hot
+/laravel/public/storage
+/laravel/public/build/
+
+# Composer
+/laravel/composer.phar
+
+# NPM
+/laravel/package-lock.json
+/laravel/yarn.lock
+/laravel/npm-debug.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Testing
+/laravel/coverage/
+/laravel/.phpunit.result.cache
+
+#1C XLM
+/files/
+
+#Images and files
+/storage/**/*.jpg
+/storage/**/*.jpeg
+/storage/**/*.png
+/storage/**/*.webp
+/storage/**/*.gif
+/storage/**/*.pdf
+
+#static
+/laravel/webstat/

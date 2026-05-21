@@ -1,0 +1,66 @@
+.data-btn-c{
+/* Кольори та рамка */
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  color: #000000;
+
+  /* Текст */
+  font-family: sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  
+  /* Розміри та центрування */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  min-height: 19px;
+  margin: 5px;
+  
+  /* Взаємодія */
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+}
+
+
+/* Ефект при наведенні */
+.data-btn-c:hover {
+  background-color: #f5f5f5;
+  border-color: #d8d8d8;
+}
+
+.loader-box{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #2e2e2e90;
+}
+
+.loader {
+  width: 25px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid rgb(255, 255, 255);
+  border-right-color: rgb(157, 157, 157);
+  animation: l2 1s infinite linear;
+}
+@keyframes l2 {to{transform: rotate(1turn)}}
+
+
+.add-btn-js-dop{
+  font-size: 12px;
+  margin: 5px;
+  padding: 0px;
+}
+
+.add-btn-js-dop:hover{
+  text-decoration: underline;
+}
