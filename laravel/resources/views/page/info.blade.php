@@ -7,4 +7,5 @@
 <section>
     {!! $content !!}
 </section>
+<p>+</p>
 @endsection
