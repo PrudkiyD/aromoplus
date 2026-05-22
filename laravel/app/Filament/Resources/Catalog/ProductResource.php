@@ -40,6 +40,12 @@ class ProductResource extends Resource
 
                         Forms\Components\Section::make('Ціни та склад')
                             ->schema([
+                                Forms\Components\TextInput::make('internal_sku')->label('АПН'),
+
+                                Forms\Components\TextInput::make('manufacturer_sku')->label('Артикул'),
+
+                                Forms\Components\TextInput::make('one_c_sku')->label('1CID'),
+
                                 Forms\Components\TextInput::make('price')
                                     ->numeric()
                                     ->prefix('₴')
@@ -49,14 +55,13 @@ class ProductResource extends Resource
                                     ->numeric()
                                     ->default(0),
 
-                                Forms\Components\Select::make('availability')
-                                    ->options([
-                                        Product::AVAILABILITY_IN_STOCK => 'В наявності',
-                                        Product::AVAILABILITY_OUT_OF_STOCK => 'Немає в наявності',
-                                        Product::AVAILABILITY_ON_ORDER => 'Під замовлення',
-                                    ])
-                                    ->required()
-                                    ->native(false),
+                                
+                            ])->columns(2),
+                        
+                        Forms\Components\Section::make('Пошук')
+                            ->schema([
+                                Forms\Components\TextInput::make('search_words')
+                                    ->required(),
                             ])->columns(2),
                     ])
                     ->columnSpan(['lg' => 2]),
@@ -68,6 +73,15 @@ class ProductResource extends Resource
                                 Forms\Components\Toggle::make('is_published')
                                     ->label('Опубліковано')
                                     ->default(true),
+
+                                Forms\Components\Select::make('availability')
+                                    ->options([
+                                        Product::AVAILABILITY_IN_STOCK => 'В наявності',
+                                        Product::AVAILABILITY_OUT_OF_STOCK => 'Немає в наявності',
+                                        Product::AVAILABILITY_ON_ORDER => 'Під замовлення',
+                                    ])
+                                ->required()
+                                ->native(false),
 
                                 Forms\Components\Select::make('categories')
                                     ->relationship('categories', 'name')
@@ -111,13 +125,6 @@ class ProductResource extends Resource
                                         : 'Фото відсутнє'),
                             ]),
 
-                        Forms\Components\Section::make('Артикули (SKU)')
-                            ->schema([
-                                Forms\Components\TextInput::make('internal_sku')->label('Внутрішній SKU'),
-                                Forms\Components\TextInput::make('manufacturer_sku')->label('SKU виробника'),
-                                Forms\Components\TextInput::make('atel_sku')->label('Atel SKU'),
-                                Forms\Components\TextInput::make('one_c_sku')->label('1C SKU'),
-                            ])->collapsed(), // Приховаємо за замовчуванням
                     ])
                     ->columnSpan(['lg' => 1]),
             ])
