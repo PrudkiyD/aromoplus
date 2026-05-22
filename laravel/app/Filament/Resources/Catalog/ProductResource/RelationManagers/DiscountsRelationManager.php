@@ -50,7 +50,7 @@ class DiscountsRelationManager extends RelationManager
 
                 Toggle::make('vat_included')
                     ->label('ПДВ включено')
-                    ->default(true)
+                    ->default(false)
                     ->inline(false),
             ]);
     }
