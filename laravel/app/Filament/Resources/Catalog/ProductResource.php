@@ -63,7 +63,7 @@ class ProductResource extends Resource
                                 Forms\Components\Textarea::make('search_words')
                                     ->rows(3)
                                     ->required(),
-                            ])->columns(2),
+                            ])->columns(1),
                     ])
                     ->columnSpan(['lg' => 2]),
 
@@ -149,7 +149,10 @@ class ProductResource extends Resource
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Назва')
-                    ->searchable()
+                    ->searchable(query: function ($query, $search) {
+                        $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('search_words', 'like', "%{$search}%");
+                    })
                     ->sortable()
                     ->lineClamp(2)
                     ->wrap()
@@ -198,6 +201,7 @@ class ProductResource extends Resource
                     ->placeholder('Всі товари')
                     ->trueLabel('Опубліковані')
                     ->falseLabel('Не опубліковані'),
+
                 Tables\Filters\SelectFilter::make('availability')
                     ->label('Наявність')
                     ->options([
