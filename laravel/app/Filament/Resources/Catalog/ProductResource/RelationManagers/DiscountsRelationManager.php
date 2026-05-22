@@ -19,7 +19,7 @@ class DiscountsRelationManager extends RelationManager
     protected static string $relationship = 'discounts';
 
     // Заголовок для всієї секції
-    protected static ?string $title = 'Знижки від кількості';
+    protected static ?string $title = 'Знижки';
 
     public function form(Form $form): Form
     {
