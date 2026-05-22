@@ -44,14 +44,14 @@ class ProductResource extends Resource
 
                                 Forms\Components\TextInput::make('manufacturer_sku')->label('Артикул'),
 
-                                Forms\Components\TextInput::make('one_c_sku')->label('1CID'),
-
                                 Forms\Components\TextInput::make('price')
+                                    ->label('Ціна')
                                     ->numeric()
                                     ->prefix('₴')
                                     ->required(),
                                 
                                 Forms\Components\TextInput::make('quantity')
+                                    ->label('Кількість')
                                     ->numeric()
                                     ->default(0),
 
@@ -60,7 +60,8 @@ class ProductResource extends Resource
                         
                         Forms\Components\Section::make('Пошук')
                             ->schema([
-                                Forms\Components\TextInput::make('search_words')
+                                Forms\Components\Textarea::make('search_words')
+                                    ->rows(3)
                                     ->required(),
                             ])->columns(2),
                     ])
