@@ -330,7 +330,11 @@ renderLoader()
 
 document.addEventListener('keydown', function (event) {
         if (event.ctrlKey && event.key === 's' || event.ctrlKey && event.key === 'і') {
-            setTimeout(renderBtn, 2000)
+            setTimeout(function(){
+                if (pattern.test(currentUrl)) {
+                    renderBtn()
+                }
+            }, 2000)
         }
 
         
