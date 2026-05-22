@@ -54,6 +54,10 @@ class ProductResource extends Resource
                                     ->label('Кількість')
                                     ->numeric()
                                     ->default(0),
+                                
+                                Forms\Components\TextInput::make('one_c_path')
+                                    ->label('Шлях в 1с')
+                                    ->columnSpanFull(),
 
                                 
                             ])->columns(2),
