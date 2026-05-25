@@ -31,6 +31,7 @@ class TopCustomersTable extends BaseWidget
                     ->orderByDesc('total_spent')
                     ->limit(5)
             )
+            ->getTableRecordKeyUsing(fn ($record) => (string) $record->phone)
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Клієнт'),
