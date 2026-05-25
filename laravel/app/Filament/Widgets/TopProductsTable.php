@@ -33,6 +33,7 @@ class TopProductsTable extends BaseWidget
                     ->orderByDesc('total_qty')
                     ->limit(5)
             )
+            ->getTableRecordKeyUsing(fn ($record) => (string) $record->internal_sku)
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Назва товару')
