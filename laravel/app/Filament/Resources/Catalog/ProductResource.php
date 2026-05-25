@@ -73,6 +73,15 @@ class ProductResource extends Resource
 
                 Forms\Components\Group::make()
                     ->schema([
+                        Forms\Components\Section::make('Зображення')
+                            ->schema([
+                                Forms\Components\Placeholder::make('current_image')
+                                    ->label('Поточне фото')
+                                    ->content(fn ($record) => $record && $record->main_image 
+                                        ? new \Illuminate\Support\HtmlString("<img src='/storage/{$record->main_image}' style='max-height: 200px; border-radius: 8px;'><a href='/catalog/product/{$record->id}'>Переглянути сторінку товара</a>")
+                                        : 'Фото відсутнє'),
+                            ]),
+                            
                         Forms\Components\Section::make('Статус та Категорії')
                             ->schema([
                                 Forms\Components\Toggle::make('is_published')
@@ -95,40 +104,7 @@ class ProductResource extends Resource
                                     ->searchable(),
                             ]),
 
-                        Forms\Components\Section::make('Зображення')
-                            ->schema([
-                                /*
-                                Forms\Components\FileUpload::make('main_image')
-                                    ->label('Змінити')
-                                    ->image()
-                                    ->saveUploadedFileUsing(function ($file) {
-                                        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                                        $targetFolder = '/var/www/aromoplus1/data/www/aromoplus.com.ua/storage/product-images/';
-
-                                        // 1. Перевіряємо, чи існує папка, якщо ні — створюємо її
-                                        if (!file_exists($targetFolder)) {
-                                            mkdir($targetFolder, 0775, true);
-                                        }
-
-                                        // 2. Використовуємо getRealPath(), щоб отримати шлях до тимчасового файлу
-                                        $tempPath = $file->getRealPath();
-                                        $targetPath = $targetFolder . $filename;
-
-                                        // 3. Копіюємо файл замість move, щоб уникнути конфліктів прав між директоріями
-                                        if (copy($tempPath, $targetPath)) {
-                                            chmod($targetPath, 0664); // Надаємо права на читання файлу
-                                            return 'product-images/' . $filename;
-                                        }
-
-                                        throw new \Exception("Не вдалося скопіювати файл у $targetPath");
-                                    }),
-                                */
-                                Forms\Components\Placeholder::make('current_image')
-                                    ->label('Поточне фото')
-                                    ->content(fn ($record) => $record && $record->main_image 
-                                        ? new \Illuminate\Support\HtmlString("<img src='/storage/{$record->main_image}' style='max-height: 200px; border-radius: 8px;'><a href='/catalog/product/{$record->id}'>Переглянути сторінку товара</a>")
-                                        : 'Фото відсутнє'),
-                            ]),
+                        
 
                     ])
                     ->columnSpan(['lg' => 1]),
