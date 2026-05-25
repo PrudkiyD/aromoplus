@@ -24,6 +24,7 @@ class TopProductsTable extends BaseWidget
                     ->join('product_product', 'order_productitem.product_id', '=', 'product_product.id')
                     ->where('order_order.status', Order::STATUS_SUCCESSFUL)
                     ->select(
+                        'product_product.id as id', // Filament автоматично підхопить це поле як ключ запису
                         'product_product.name',
                         'product_product.internal_sku',
                         DB::raw('SUM(order_productitem.quantity) as total_qty'),
@@ -33,7 +34,6 @@ class TopProductsTable extends BaseWidget
                     ->orderByDesc('total_qty')
                     ->limit(5)
             )
-            ->getTableRecordKeyUsing(fn ($record) => (string) $record->internal_sku)
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Назва товару')
@@ -46,6 +46,6 @@ class TopProductsTable extends BaseWidget
                     ->label('Сума (₴)')
                     ->money('UAH'),
             ])
-            ->paginated(false); // Вимикаємо пагінацію, бо це Топ-5
+            ->paginated(false); // Вимикаємо пагінацію, бо це фіксований Топ-5
     }
 }

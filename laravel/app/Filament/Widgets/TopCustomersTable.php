@@ -22,6 +22,7 @@ class TopCustomersTable extends BaseWidget
                     ->join('user_customer', 'order_order.customer_id', '=', 'user_customer.id')
                     ->where('order_order.status', Order::STATUS_SUCCESSFUL)
                     ->select(
+                        'user_customer.id as id', // Filament автоматично підхопить це поле як ключ запису
                         'user_customer.name',
                         'user_customer.phone',
                         DB::raw('COUNT(order_order.id) as orders_count'),
@@ -31,7 +32,6 @@ class TopCustomersTable extends BaseWidget
                     ->orderByDesc('total_spent')
                     ->limit(5)
             )
-            ->getTableRecordKeyUsing(fn ($record) => (string) $record->phone)
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Клієнт'),
@@ -43,6 +43,6 @@ class TopCustomersTable extends BaseWidget
                     ->label('Всього витратив')
                     ->money('UAH'),
             ])
-            ->paginated(false);
+            ->paginated(false); // Вимикаємо пагінацію
     }
 }
