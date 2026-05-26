@@ -15,7 +15,9 @@ class MonthlySalesAndCustomersChart extends ChartWidget
 
     protected function getData(): array
     {
-        $currentYear = Carbon::now()->year;
+        $now = Carbon::now();
+        $currentYear = $now->year;
+        $currentMonth = $now->month; // Отримуємо номер поточного місяця
 
         // 1. Отримуємо успішні замовлення за поточний рік, згруповані по місяцях
         $orders = Order::where('status', Order::STATUS_SUCCESSFUL)
@@ -29,8 +31,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
             ->get()
             ->keyBy('month');
 
-        // 2. Визначаємо нових та повторних клієнтів по місяцях
-        // Новий клієнт — це той, чиє НАЙПЕРШЕ успішне замовлення було в цьому місяці
+        // 2. Визначаємо нових клієнтів
         $firstOrders = Order::where('status', Order::STATUS_SUCCESSFUL)
             ->select('customer_id', DB::raw('MIN(created_at) as first_order_date'))
             ->whereNotNull('customer_id')
@@ -44,22 +45,24 @@ class MonthlySalesAndCustomersChart extends ChartWidget
             ->get()
             ->keyBy('month');
 
-        // Формуємо масиви даних для всіх 12 місяців
+        // Масиви для результатів
         $salesData = [];
         $newCustomersData = [];
         $returningCustomersData = [];
+        $labels = [];
 
-        $monthsLabels = ['Січ', 'Лют', 'Бер', 'Квіт', 'Трав', 'Черв', 'Лип', 'Серп', 'Верес', 'Жовт', 'Лист', 'Груд'];
+        $allMonthsLabels = ['Січ', 'Лют', 'Бер', 'Квіт', 'Трав', 'Черв', 'Лип', 'Серп', 'Верес', 'Жовт', 'Лист', 'Груд'];
 
-        for ($m = 1; $m <= 12; $m++) {
+        // Цикл йде ТІЛЬКИ до поточного місяця включно ($currentMonth)
+        for ($m = 1; $m <= $currentMonth; $m++) {
+            $labels[] = $allMonthsLabels[$m - 1];
+
             $monthOrder = $orders->get($m);
             $salesData[] = $monthOrder ? (float) $monthOrder->total_sales : 0;
 
-            // Кількість нових покупців у цьому місяці
             $newCount = $newCustomersByMonth->get($m)?->count ?? 0;
             $newCustomersData[] = $newCount;
 
-            // Повторні покупки (загальна к-сть замовлень мінус нові клієнти)
             $totalOrdersCount = $monthOrder ? $monthOrder->total_orders : 0;
             $returningCount = max(0, $totalOrdersCount - $newCount);
             $returningCustomersData[] = $returningCount;
@@ -70,52 +73,93 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                 [
                     'label' => 'Продажі (₴)',
                     'data' => $salesData,
-                    'borderColor' => '#10B981',
-                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
+                    'borderColor' => '#10B981', // Смарагдовий
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.05)', // Легке стильне підсвічування під лінією
+                    'fill' => true,
+                    'tension' => 0.4, // Згладжування лінії (робить її плавною та сучасною)
+                    'borderWidth' => 3,
+                    'pointRadius' => 4,
+                    'pointHoverRadius' => 6,
                     'yAxisID' => 'y',
-                    'type' => 'line', // Робимо продажі лінією
+                    'type' => 'line',
                 ],
                 [
-                    'label' => 'Нові клієнти (замовлення)',
+                    'label' => 'Нові клієнти',
                     'data' => $newCustomersData,
-                    'backgroundColor' => '#3B82F6',
+                    'backgroundColor' => '#3B82F6', // Синій
+                    'borderRadius' => 6, // Закруглені кути стовпчиків
+                    'stack' => 'customers', // Об'єднуємо в один стовпчик (stack)
                     'yAxisID' => 'y1',
                     'type' => 'bar',
                 ],
                 [
                     'label' => 'Повторні замовлення',
                     'data' => $returningCustomersData,
-                    'backgroundColor' => '#F59E0B',
+                    'backgroundColor' => '#F59E0B', // Бурштиновий
+                    'borderRadius' => 6, // Закруглені кути
+                    'stack' => 'customers', // Стек з новими клієнтами
                     'yAxisID' => 'y1',
                     'type' => 'bar',
                 ],
             ],
-            'labels' => $monthsLabels,
+            'labels' => $labels,
         ];
     }
 
     protected function getType(): string
     {
-        return 'bar'; // Основний тип (комбінований)
+        return 'bar';
     }
 
     protected function getOptions(): array
     {
         return [
+            'plugins' => [
+                'legend' => [
+                    'display' => true,
+                    'position' => 'top',
+                    'labels' => [
+                        'usePointStyle' => true, // Акуратні круглі маркери в легенді замість квадратів
+                        'boxWidth' => 8,
+                    ],
+                ],
+            ],
             'scales' => [
                 'y' => [
                     'type' => 'linear',
                     'display' => true,
                     'position' => 'left',
-                    'title' => ['display' => true, 'text' => 'Сума продажів (₴)'],
+                    'grid' => [
+                        'color' => 'rgba(156, 163, 175, 0.1)', // Дуже світла тонка сітка
+                    ],
+                    'title' => [
+                        'display' => true, 
+                        'text' => 'Сума продажів (₴)',
+                        'color' => '#9CA3AF',
+                    ],
                 ],
                 'y1' => [
                     'type' => 'linear',
                     'display' => true,
                     'position' => 'right',
-                    'grid' => ['drawOnChartArea' => false], // щоб сітки не накладалися
-                    'title' => ['display' => true, 'text' => 'Кількість замовлень'],
+                    'grid' => [
+                        'drawOnChartArea' => false, // Щоб сітки двох осей не перетиналися
+                    ],
+                    'title' => [
+                        'display' => true, 
+                        'text' => 'Кількість замовлень',
+                        'color' => '#9CA3AF',
+                    ],
                 ],
+                'x' => [
+                    'grid' => [
+                        'drawOnChartArea' => false, // Прибираємо вертикальну сітку для чистішого вигляду
+                    ],
+                ],
+            ],
+            'interaction' => [
+                'mode' => 'index',
+                'intersect' => false, // Туліп з'являтиметься при наведенні на будь-яку точку по осі Х
             ],
         ];
     }
