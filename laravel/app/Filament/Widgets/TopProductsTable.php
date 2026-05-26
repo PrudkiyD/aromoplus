@@ -32,7 +32,7 @@ class TopProductsTable extends BaseWidget
                     )
                     ->groupBy('product_product.id', 'product_product.name', 'product_product.internal_sku')
                     ->orderByDesc('total_qty')
-                    ->limit(10)
+                    ->limit(5)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')
