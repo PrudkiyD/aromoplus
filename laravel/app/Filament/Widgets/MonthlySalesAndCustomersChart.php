@@ -119,7 +119,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'display' => true,
                     'position' => 'top',
                     'labels' => [
-                        'usePointStyle' => true, // Акуратні круглі маркери в легенді замість квадратів
+                        'usePointStyle' => true,
                         'boxWidth' => 8,
                     ],
                 ],
@@ -130,7 +130,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'display' => true,
                     'position' => 'left',
                     'grid' => [
-                        'color' => 'rgba(156, 163, 175, 0.1)', // Дуже світла тонка сітка
+                        'color' => 'rgba(156, 163, 175, 0.1)',
                     ],
                     'title' => [
                         'display' => true, 
@@ -143,7 +143,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'display' => true,
                     'position' => 'right',
                     'grid' => [
-                        'drawOnChartArea' => false, // Щоб сітки двох осей не перетиналися
+                        'drawOnChartArea' => false,
                     ],
                     'title' => [
                         'display' => true, 
@@ -153,13 +153,13 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                 ],
                 'x' => [
                     'grid' => [
-                        'drawOnChartArea' => false, // Прибираємо вертикальну сітку для чистішого вигляду
+                        'drawOnChartArea' => false,
                     ],
                 ],
             ],
             'interaction' => [
                 'mode' => 'index',
-                'intersect' => false, // Туліп з'являтиметься при наведенні на будь-яку точку по осі Х
+                'intersect' => false,
             ],
         ];
     }
