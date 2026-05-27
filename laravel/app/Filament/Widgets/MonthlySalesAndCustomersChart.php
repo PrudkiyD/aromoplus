@@ -21,7 +21,6 @@ class MonthlySalesAndCustomersChart extends ChartWidget
 
         // 1. Отримуємо успішні замовлення за поточний рік, згруповані по місяцях
         $orders = Order::where('status', Order::STATUS_SUCCESSFUL)
-            ->whereYear('created_at', $currentYear)
             ->select(
                 DB::raw('MONTH(created_at) as month'),
                 DB::raw('SUM(total) as total_sales'),
