@@ -19,7 +19,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
         $currentYear = $now->year;
         $currentMonth = $now->month;
 
-        $orders = Order::where('status', Order::STATUS_SUCCESSFUL)
+        $orders = Order::where('status', '!=', 'canceled')
             ->whereYear('created_at', $currentYear)
             ->select(
                 DB::raw('MONTH(created_at) as month'),
@@ -30,7 +30,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
             ->get()
             ->keyBy('month');
 
-        $firstOrders = Order::where('status', Order::STATUS_SUCCESSFUL)
+        $firstOrders = Order::where('status', '!=', 'canceled')
             ->select('customer_id', DB::raw('MIN(created_at) as first_order_date'))
             ->whereNotNull('customer_id')
             ->groupBy('customer_id');
