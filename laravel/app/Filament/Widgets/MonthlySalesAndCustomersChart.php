@@ -58,7 +58,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
             $salesData[] = $monthOrder ? (float) $monthOrder->total_sales : 0;
 
             $totalOrdersCount = $monthOrder ? (int) $monthOrder->total_orders : 0;
-            $totalOrdersData[] = $totalOrdersCount;
+            $totalOrdersData[] = 10;
 
             $newCount = $newCustomersByMonth->get($m)?->count ?? 0;
             $newCustomersData[] = $newCount;
