@@ -46,7 +46,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
         $salesData = [];
         $newCustomersData = [];
         $returningCustomersData = [];
-        $totalOrdersData = [];
+        $totalOrdersData = []; //Загальна кількість замовлень
         $labels = [];
 
         $allMonthsLabels = ['Січ', 'Лют', 'Бер', 'Квіт', 'Трав', 'Черв', 'Лип', 'Серп', 'Верес', 'Жовт', 'Лист', 'Груд'];
@@ -58,7 +58,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
             $salesData[] = $monthOrder ? (float) $monthOrder->total_sales : 0;
 
             $totalOrdersCount = $monthOrder ? (int) $monthOrder->total_orders : 0;
-            $totalOrdersData[] = 10;
+            $totalOrdersData[] = $totalOrdersCount;
 
             $newCount = $newCustomersByMonth->get($m)?->count ?? 0;
             $newCustomersData[] = $newCount;
