@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class MonthlySalesAndCustomersChart extends ChartWidget
 {
-    protected static ?string $heading = 'Аналітика продажів та клієнтів за поточний рік';
+    protected static ?string $heading = 'Аналітика продажів (в розробці)';
     protected static ?int $sort = 1;
     protected int | string | array $columnSpan = 'full';
 
