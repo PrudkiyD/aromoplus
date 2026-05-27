@@ -30,7 +30,7 @@ class TopCustomersTable extends BaseWidget
                     )
                     ->groupBy('user_customer.id', 'user_customer.name', 'user_customer.phone')
                     ->orderByDesc('total_spent')
-                    ->limit(5)
+                    ->limit(6)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')
