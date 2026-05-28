@@ -22,10 +22,9 @@ class PartsSalesChart extends ChartWidget
         // Робимо швидкий запит через DB для підрахунку проданої кількості (quantity)
         // Враховуємо лише успішні чи оброблені замовлення (виключаємо скасовані)
         $salesByCategory = DB::table('order_productitem')
-            ->join('order_order', 'order_productitem()->order_id', '=', 'order_order.id')
+            ->join('order_order', 'order_productitem.order_id', '=', 'order_order.id') // Прибрав () після назви таблиці
             ->join('product_product_category', 'order_productitem.product_id', '=', 'product_product_category.product_id')
             ->join('product_category', 'product_product_category.category_id', '=', 'product_category.id')
-            // Фільтруємо замовлення, щоб не рахувати "скасовані" або "нові" (налаштуйте під себе)
             ->whereIn('order_order.status', [
                 Order::STATUS_READY, 
                 Order::STATUS_SHIPPED, 
@@ -34,7 +33,7 @@ class PartsSalesChart extends ChartWidget
             ->select('product_category.name as category_name', DB::raw('SUM(order_productitem.quantity) as total_qty'))
             ->groupBy('product_category.id', 'product_category.name')
             ->orderByDesc('total_qty')
-            ->limit(10) // Обмежуємо топ-10 категорій, щоб діаграма не перетворилась на "кашу"
+            ->limit(10)
             ->get();
 
         // Формуємо масиви для графіка
