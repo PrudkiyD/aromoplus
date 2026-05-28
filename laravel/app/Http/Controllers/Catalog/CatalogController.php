@@ -9,6 +9,7 @@ use App\Models\Page\Element;
 use App\Models\Catalog\Product;
 use App\Models\Catalog\Price;
 use Illuminate\Http\Request;
+use App\Models\Catalog\View;
 
 class CatalogController extends Controller
 {
@@ -73,6 +74,25 @@ class CatalogController extends Controller
 
         // Отримуємо ID прайс-листа
         $price_list_id = $request->cookie('user_price', 1);
+
+        // Створюємо унікальний ключ для сесії, наприклад: 'viewed_products.5'
+        $sessionKey = 'viewed_products.' . $product->id;
+
+        // Перевіряємо, чи немає цього ключа в сесії
+        if (!$request->session()->has($sessionKey)) {
+            
+            
+            // Записуємо перегляд у базу даних
+            View::create([
+                'product_id' => $product->id,
+                'user_id'    => auth()->check() ? auth()->id() : null, // ID юзера, якщо залогінений
+                'ip_address' => $request->ip(),                        // IP-адреса відвідувача
+            ]);
+
+            // Позначаємо в сесії, що цей товар у поточній сесії вже "подівилися"
+            $request->session()->put($sessionKey, true);
+        }
+        
 
         return view('catalog.product', compact(
             'title',
