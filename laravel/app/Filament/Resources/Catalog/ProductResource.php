@@ -30,6 +30,34 @@ class ProductResource extends Resource
                     ->schema([
                         Forms\Components\Section::make('Основна інформація')
                             ->schema([
+                                Forms\Components\Placeholder::make('popularity_status')
+                                    ->label('Аналітика популярності (365 днів)')
+                                    ->content(function (Product $record): \Illuminate\Support\HtmlString {
+                                        $score = $record->popularity ?? 0.0;
+                                        
+                                        // Визначаємо текстовий статус
+                                        $status = 'Низька активність';
+                                        $color = '#9ca3af'; // сірий
+                                        if ($score >= 4.0) {
+                                            $status = '🔥 Топ продажів та переглядів';
+                                            $color = '#ef4444'; // червоний
+                                        } elseif ($score >= 2.5) {
+                                            $status = '📈 Стабільний попит';
+                                            $color = '#f59e0b'; // помаранчевий
+                                        }
+
+                                        // Рендеримо красивий HTML-індикатор прогресу всередині картки Filament
+                                        return new \Illuminate\Support\HtmlString("
+                                            <div style='display: flex; align-items: center; gap: 12px; margin-top: 4px;'>
+                                                <span style='font-size: 1.5rem; font-weight: bold; color: ${color};'>${score} / 5.0</span>
+                                                <span style='font-size: 0.9rem; background: ${color}22; color: ${color}; padding: 2px 8px; border-radius: 6px; font-weight: 600;'>${status}</span>
+                                            </div>
+                                            <div style='width: 100%; background: #e5e7eb; height: 8px; border-radius: 4px; margin-top: 8px; overflow: hidden;'>
+                                                <div style='width: " . ($score * 20) . "%; background: ${color}; height: 100%; transition: width 0.5s ease;'></div>
+                                            </div>
+                                        ");
+                                    }),
+
                                 Forms\Components\TextInput::make('name')
                                     ->required()
                                     ->maxLength(255),
