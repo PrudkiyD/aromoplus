@@ -81,6 +81,7 @@ class CatalogController extends Controller
         // Перевіряємо, чи немає цього ключа в сесії
         if (!$request->session()->has($sessionKey)) {
             
+            dd($request->ip());
             // Записуємо перегляд у базу даних
             View::create([
                 'product_id' => $product->id,
