@@ -59,10 +59,12 @@ class ProductResource extends Resource
                                     }),
 
                                 Forms\Components\TextInput::make('name')
+                                    ->label('Назва')
                                     ->required()
                                     ->maxLength(255),
                                 
                                 Forms\Components\RichEditor::make('description')
+                                    ->label('Опис')
                                     ->columnSpanFull(),
                             ]),
 
