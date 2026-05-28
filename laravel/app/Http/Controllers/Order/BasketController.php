@@ -134,7 +134,7 @@ class BasketController extends Controller
         $this->updateBasketTotal($basket);
 
         // Створюємо унікальний ключ для сесії, наприклад: 'viewed_products.5'
-        $sessionKey = 'viewed_products.' . $$item->id;
+        $sessionKey = 'viewed_products.' . $item->id;
 
         // Перевіряємо, чи немає цього ключа в сесії
         if (!$request->session()->has($sessionKey)) {
@@ -142,7 +142,7 @@ class BasketController extends Controller
             
             // Записуємо перегляд у базу даних
             View::create([
-                'product_id' => $$item->id,
+                'product_id' => $item->id,
                 'user_id'    => auth()->check() ? auth()->id() : null, // ID юзера, якщо залогінений
                 'ip_address' => $request->ip(),                        // IP-адреса відвідувача
             ]);
