@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class TopProductsTable extends BaseWidget
 {
-    protected static ?string $heading = 'Топ-10 ходових товарів';
+    protected static ?string $heading = 'Топ-10 ходових товарів (в розробці)';
     protected static ?int $sort = 3;
     protected int | string | array $columnSpan = '1/2'; // Займає половину екрану
 
@@ -32,7 +32,7 @@ class TopProductsTable extends BaseWidget
                     )
                     ->groupBy('product_product.id', 'product_product.name', 'product_product.internal_sku')
                     ->orderByDesc('total_qty')
-                    ->limit(5)
+                    ->limit(10)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')

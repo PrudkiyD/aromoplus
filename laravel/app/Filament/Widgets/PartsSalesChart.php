@@ -8,7 +8,7 @@ use App\Models\Order\Order;
 
 class PartsSalesChart extends ChartWidget
 {
-    protected static ?string $heading = 'Сума продажів за категоріями';
+    protected static ?string $heading = 'Сума продажів за категоріями (в розробці)';
     protected int | string | array $columnSpan = '1/2';
     protected static ?int $sort = 1;
     protected function getData(): array

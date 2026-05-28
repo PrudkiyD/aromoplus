@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class TopCustomersTable extends BaseWidget
 {
-    protected static ?string $heading = 'Топ-10 покупців';
+    protected static ?string $heading = 'Топ-10 покупців (в розробці)';
     protected static ?int $sort = 4;
     protected int | string | array $columnSpan = '1/2';
 
@@ -30,7 +30,7 @@ class TopCustomersTable extends BaseWidget
                     )
                     ->groupBy('user_customer.id', 'user_customer.name', 'user_customer.phone')
                     ->orderByDesc('total_spent')
-                    ->limit(5)
+                    ->limit(10)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')
