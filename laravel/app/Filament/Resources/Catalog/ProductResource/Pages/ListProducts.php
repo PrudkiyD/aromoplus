@@ -125,6 +125,54 @@ class ListProducts extends ListRecords
         }
     }
 
+    public function updatePopularity(){
+        $dateLimit = now()->subDays(365);
+
+        // 1. Збираємо статистику по кожному товару
+        $stats = Product::all()->map(function ($product) use ($dateLimit) {
+            // Рахуємо унікальні перегляди через модель/зв'язок View
+            $viewsCount = $product->views()->where('created_at', '>=', $dateLimit)->count();
+
+            // Рахуємо кількість замовлень та проданих штук
+            $orderStats = DB::table('order_productitem')
+                ->where('product_id', $product->id)
+                ->where('created_at', '>=', $dateLimit)
+                ->select(
+                    DB::raw('COUNT(DISTINCT order_id) as orders_count'),
+                    DB::raw('SUM(quantity) as items_count')
+                )->first();
+
+            return [
+                'id'      => $product->id,
+                'orders'  => $orderStats->orders_count ?? 0,
+                'items'   => $orderStats->items_count ?? 0,
+                'views'   => $viewsCount,
+            ];
+        });
+
+        // 2. Знаходимо максимуми по всьому сайту для лінійної нормалізації
+        $maxOrders = max($stats->pluck('orders')->toArray()) ?: 1;
+        $maxItems  = max($stats->pluck('items')->toArray()) ?: 1;
+        $maxViews  = max($stats->pluck('views')->toArray()) ?: 1;
+
+        // 3. Рахуємо бали та оновлюємо поле popularity у базі даних
+        foreach ($stats as $stat) {
+            // Приводимо кожну метрику до шкали від 0 до 5
+            $scoreOrders = ($stat['orders'] / $maxOrders) * 5;
+            $scoreItems  = ($stat['items'] / $maxItems) * 5;
+            $scoreViews  = ($stat['views'] / $maxViews) * 5;
+
+            // Вага для B2B: 60% — замовлення, 20% — штуки, 20% — перегляди
+            $popularity = ($scoreOrders * 0.6) + ($scoreItems * 0.2) + ($scoreViews * 0.2);
+            
+            // Округлюємо до одного знака після коми (наприклад, 4.2)
+            $popularity = round($popularity, 1);
+
+            // Оновлюємо товар у базі
+            Product::where('id', $stat['id'])->update(['popularity' => $popularity]);
+        }
+    }
+
 
     protected function getHeaderActions(): array
     {
@@ -138,6 +186,7 @@ class ListProducts extends ListRecords
                 ->modalDescription('Ви впевнені, що хочете прочитати дані з архіву From1C.zip?')
                 ->action(function(){ 
                     $this->updateProduct();
+                    $this->updatePopularity();
                 }),
                 
             Actions\CreateAction::make(),
