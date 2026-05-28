@@ -162,8 +162,8 @@ class ListProducts extends ListRecords
             $scoreItems  = ($stat['items'] / $maxItems) * 5;
             $scoreViews  = ($stat['views'] / $maxViews) * 5;
 
-            // Вага для B2B: 60% — замовлення, 20% — штуки, 20% — перегляди
-            $popularity = ($scoreOrders * 0.6) + ($scoreItems * 0.2) + ($scoreViews * 0.2);
+            // Вага для B2B: 40% — замовлення, 40% — штуки, 20% — перегляди
+            $popularity = ($scoreOrders * 0.4) + ($scoreItems * 0.4) + ($scoreViews * 0.2);
             
             // Округлюємо до одного знака після коми (наприклад, 4.2)
             $popularity = round($popularity, 1);
