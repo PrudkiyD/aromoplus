@@ -27,6 +27,7 @@ class PartsSalesChart extends ChartWidget
                 Order::STATUS_SUCCESSFUL
             ])
             // Рахуємо загальну вартість проданого по категоріях
+            ->where('product_category.is_published', true)
             ->select(
                 'product_category.name as category_name', 
                 DB::raw('SUM(order_productitem.price * order_productitem.quantity) as total_sum')
