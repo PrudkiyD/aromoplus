@@ -182,8 +182,8 @@ class ListProducts extends ListRecords
                 ->color('gray')
                 ->icon('heroicon-o-arrow-path') // Змінив на іконку оновлення
                 ->requiresConfirmation() // Додасть вікно підтвердження
-                ->modalHeading('Оновлення каталогу товара')
-                ->modalDescription('Оновити наявноість, кількість, ціни та прорахувати популярність товраів?')
+                ->modalHeading('Оновлення каталогу товарів')
+                ->modalDescription('Оновити наявність, кількість, ціни та прорахувати популярність товарів?')
                 ->action(function(){ 
                     $this->updateProduct();
                     $this->updatePopularity();
