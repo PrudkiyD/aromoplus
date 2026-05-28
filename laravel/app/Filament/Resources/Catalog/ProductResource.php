@@ -122,17 +122,16 @@ class ProductResource extends Resource
                     ->label('👁')
                     ->boolean(),
 
-                Tables\Columns\IconColumn::make('popularity')
+                Tables\Columns\TextColumn::make('popularity')
                     ->label('Популярність')
-                    ->options([
-                        'heroicon-o-star' => fn ($state): bool => $state < 1,
-                        'heroicon-s-star' => fn ($state): bool => $state >= 1,
-                    ])
-                    ->colors([
-                        'warning' => fn ($state): bool => $state >= 3.5, // Золоті зірочки для високого рейтингу
-                        'gray',
-                    ])
-                    ->description(fn (Product $record): string => "${record->popularity} / 5.0") // Покаже цифру під зірочкою
+                    ->numeric(1) // Округлює до 1 знака після коми (наприклад, 4.3)
+                    ->badge()    // Робить поле у вигляді красивого бейджа
+                    ->icon(fn ($state) => $state >= 4.0 ? 'heroicon-m-fire' : 'heroicon-m-chart-bar')
+                    ->color(fn ($state): string => match (true) {
+                        $state >= 4.0 => 'danger',  // Червоний бейдж для топу
+                        $state >= 2.5 => 'warning', // Помаранчевий для середнього попиту
+                        default => 'gray',          // Сірий для низької активності
+                    })
                     ->sortable(),
 
                 ImageColumn::make('main_image')
