@@ -31,7 +31,7 @@ class CatalogController extends Controller
 
         $products = $category->products()
             ->where('is_published', true)
-            ->orderBy('availability', 'asc')
+            ->orderBy('popularity', 'asc')
             ->with([
                 'labels',
                 'discounts' => function ($q) use ($price_list_id) {
