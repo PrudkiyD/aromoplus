@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class TopCustomersTable extends BaseWidget
 {
     protected static ?string $heading = 'Топ-10 покупців';
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 4;
     protected int | string | array $columnSpan = '1/2'; // Займає другу половину екрану
 
     public function table(Table $table): Table

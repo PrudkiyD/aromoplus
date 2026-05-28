@@ -11,11 +11,8 @@ class PartsSalesChart extends ChartWidget
     // Заголовок віджета в панелі
     protected static ?string $heading = 'Продажі запчастин за категоріями';
     
-    // Сортування (опціонально — щоб відображався у правильному місці)
-    protected static ?int $sort = 1;
-
-    // Оновлюємо дані в реальному часі кожні 5 хвилин (опціонально)
-    protected static ?string $pollingInterval = '300s';
+    protected static ?int $sort = 2;
+    protected int | string | array $columnSpan = 'full';
 
     protected function getData(): array
     {
