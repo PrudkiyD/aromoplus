@@ -31,18 +31,10 @@ class CatalogController extends Controller
 
         $products = $category->products()
             ->where('is_published', true)
-            
-            // 1. Спочатку товари, де кількість більше 0 (використовуємо сирий SQL для сортування за умовою)
-            ->orderByRaw('quantity > 0 DESC')
-            
-            // 2. Потім сортуємо за популярністю від 5.0 до 0.0
-            ->orderBy('popularity', 'desc')
-            
-            // 3. Якщо популярність однакова, сортуємо за залишком (де більше — той вище)
-            ->orderBy('quantity', 'desc')
-            
-            // 4. Додаткове сортування за текстовим статусом availability (якщо потрібно)
             ->orderBy('availability', 'asc') 
+            ->orderByRaw('quantity > 0 DESC')
+            ->orderBy('popularity', 'desc')
+            ->orderBy('quantity', 'desc')
             
             ->with([
                 'labels',
