@@ -9,14 +9,10 @@ use App\Models\Order\Order;
 class PartsSalesChart extends ChartWidget
 {
     protected static ?string $heading = 'Сума продажів за категоріями';
-    
+    protected int | string | array $columnSpan = '1/2';
     protected static ?int $sort = 1;
-
-    protected static ?string $pollingInterval = '300s';
-
     protected function getData(): array
     {
-        // Рахуємо суму: ціна * кількість для кожного пункту в замовленні
         $salesByCategory = DB::table('order_productitem')
             ->join('order_order', 'order_productitem.order_id', '=', 'order_order.id')
             ->join('product_product_category', 'order_productitem.product_id', '=', 'product_product_category.product_id')
@@ -26,8 +22,8 @@ class PartsSalesChart extends ChartWidget
                 Order::STATUS_SHIPPED, 
                 Order::STATUS_SUCCESSFUL
             ])
-            // Рахуємо загальну вартість проданого по категоріях
             ->where('product_category.is_published', true)
+            ->where('order_order.created_at', '>=', now()->subDays(365))
             ->select(
                 'product_category.name as category_name', 
                 DB::raw('SUM(order_productitem.price * order_productitem.quantity) as total_sum')
@@ -38,7 +34,7 @@ class PartsSalesChart extends ChartWidget
             ->get();
 
         $labels = $salesByCategory->pluck('category_name')->toArray();
-        // Округлюємо суму до 2 знаків після коми для гарного відображення
+
         $data = $salesByCategory->pluck('total_sum')->map(fn ($value) => round($value, 2))->toArray();
 
         $backgroundColors = [
@@ -65,7 +61,6 @@ class PartsSalesChart extends ChartWidget
         return 'pie'; 
     }
 
-    // Цей метод повністю вимикає лінії сітки та цифри 0..1 на фоні кругової діаграми
     protected function getOptions(): array
     {
         return [

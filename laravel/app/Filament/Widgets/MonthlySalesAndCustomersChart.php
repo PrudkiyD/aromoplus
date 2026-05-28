@@ -11,7 +11,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
 {
     protected static ?string $heading = 'Аналітика продажів (в розробці)';
     protected static ?int $sort = 1;
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = '1/2';
 
     protected function getData(): array
     {
