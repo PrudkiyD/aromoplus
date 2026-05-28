@@ -30,6 +30,7 @@ class PartsSalesChart extends ChartWidget
                 Order::STATUS_SHIPPED, 
                 Order::STATUS_SUCCESSFUL
             ])
+            ->where('product_category.is_published', true)
             ->select('product_category.name as category_name', DB::raw('SUM(order_productitem.quantity) as total_qty'))
             ->groupBy('product_category.id', 'product_category.name')
             ->orderByDesc('total_qty')
