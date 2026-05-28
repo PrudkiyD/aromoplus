@@ -10,6 +10,7 @@ use App\Models\Order\ProductItem;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Http\Request;
+use App\Models\Catalog\View;
 
 class BasketController extends Controller
 {
