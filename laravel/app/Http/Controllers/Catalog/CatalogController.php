@@ -77,11 +77,12 @@ class CatalogController extends Controller
 
         // Створюємо унікальний ключ для сесії, наприклад: 'viewed_products.5'
         $sessionKey = 'viewed_products.' . $product->id;
+        dd($request->ip());
 
         // Перевіряємо, чи немає цього ключа в сесії
         if (!$request->session()->has($sessionKey)) {
             
-            dd($request->ip());
+            
             // Записуємо перегляд у базу даних
             View::create([
                 'product_id' => $product->id,
