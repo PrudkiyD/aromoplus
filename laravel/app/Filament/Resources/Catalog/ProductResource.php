@@ -122,6 +122,19 @@ class ProductResource extends Resource
                     ->label('👁')
                     ->boolean(),
 
+                Tables\Columns\IconColumn::make('popularity')
+                    ->label('Популярність')
+                    ->options([
+                        'heroicon-o-star' => fn ($state): bool => $state < 1,
+                        'heroicon-s-star' => fn ($state): bool => $state >= 1,
+                    ])
+                    ->colors([
+                        'warning' => fn ($state): bool => $state >= 3.5, // Золоті зірочки для високого рейтингу
+                        'gray',
+                    ])
+                    ->description(fn (Product $record): string => "${record->popularity} / 5.0") // Покаже цифру під зірочкою
+                    ->sortable(),
+
                 ImageColumn::make('main_image')
                     ->label('Фото')
                     ->size(75)
