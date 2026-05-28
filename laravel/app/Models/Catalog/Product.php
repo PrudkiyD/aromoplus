@@ -12,6 +12,7 @@ class Product extends Model
     protected $table = 'product_product';
     public $timestamps = false;
     protected $fillable = [
+        'popularity',
         'main_image',
         'availability',
         'is_published',
