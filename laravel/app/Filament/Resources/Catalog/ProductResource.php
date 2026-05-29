@@ -213,6 +213,7 @@ class ProductResource extends Resource
                         $state >= 2.5 => 'warning', // Помаранчевий для середнього попиту
                         default => 'gray',          // Сірий для низької активності
                     })
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('abc_class')
