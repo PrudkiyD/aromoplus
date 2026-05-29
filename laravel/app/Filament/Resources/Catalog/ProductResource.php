@@ -30,34 +30,6 @@ class ProductResource extends Resource
                     ->schema([
                         Forms\Components\Section::make('Основна інформація')
                             ->schema([
-                                Forms\Components\Placeholder::make('popularity_status')
-                                    ->label('Аналітика популярності (365 днів)')
-                                    ->content(function (Product $record): \Illuminate\Support\HtmlString {
-                                        $score = $record->popularity ?? 0.0;
-                                        
-                                        // Визначаємо текстовий статус
-                                        $status = 'Низька активність';
-                                        $color = '#9ca3af'; // сірий
-                                        if ($score >= 4.0) {
-                                            $status = '🔥 Висока активність';
-                                            $color = '#ef4444'; // червоний
-                                        } elseif ($score >= 2.5) {
-                                            $status = '📈 Середня активність';
-                                            $color = '#f59e0b'; // помаранчевий
-                                        }
-
-                                        // Рендеримо красивий HTML-індикатор прогресу всередині картки Filament
-                                        return new \Illuminate\Support\HtmlString("
-                                            <div style='display: flex; align-items: center; gap: 12px; margin-top: 4px;'>
-                                                <span style='font-size: 1.5rem; font-weight: bold; color: ${color};'>${score} / 5.0</span>
-                                                <span style='font-size: 0.9rem; background: ${color}22; color: ${color}; padding: 2px 8px; border-radius: 6px; font-weight: 600;'>${status}</span>
-                                            </div>
-                                            <div style='width: 100%; background: #e5e7eb; height: 8px; border-radius: 4px; margin-top: 8px; overflow: hidden;'>
-                                                <div style='width: " . ($score * 20) . "%; background: ${color}; height: 100%; transition: width 0.5s ease;'></div>
-                                            </div>
-                                        ");
-                                    }),
-
                                 Forms\Components\TextInput::make('name')
                                     ->label('Назва')
                                     ->required()
@@ -67,7 +39,6 @@ class ProductResource extends Resource
                                     ->label('Опис')
                                     ->columnSpanFull(),
                             ]),
-
                         Forms\Components\Section::make('Ціни та склад')
                             ->schema([
                                 Forms\Components\TextInput::make('internal_sku')->label('АПН'),
@@ -98,6 +69,86 @@ class ProductResource extends Resource
                                     ->rows(3)
                                     ->required(),
                             ])->columns(1),
+                        Forms\Components\Section::make('Аналітика')
+                        ->schema([
+                            Forms\Components\Placeholder::make('popularity_status')
+                                ->label('Аналітика популярності (365 днів)')
+                                ->content(function (Product $record): \Illuminate\Support\HtmlString {
+                                    $score = $record->popularity ?? 0.0;
+                                    
+                                    // Визначаємо текстовий статус
+                                    $status = 'Низька активність';
+                                    $color = '#9ca3af'; // сірий
+                                    if ($score >= 4.0) {
+                                        $status = '🔥 Висока активність';
+                                        $color = '#ef4444'; // червоний
+                                    } elseif ($score >= 2.5) {
+                                        $status = '📈 Середня активність';
+                                        $color = '#f59e0b'; // помаранчевий
+                                    }
+
+                                    // Рендеримо красивий HTML-індикатор прогресу всередині картки Filament
+                                    return new \Illuminate\Support\HtmlString("
+                                        <div style='display: flex; align-items: center; gap: 12px; margin-top: 4px;'>
+                                            <span style='font-size: 1.5rem; font-weight: bold; color: ${color};'>${score} / 5.0</span>
+                                            <span style='font-size: 0.9rem; background: ${color}22; color: ${color}; padding: 2px 8px; border-radius: 6px; font-weight: 600;'>${status}</span>
+                                        </div>
+                                        <div style='width: 100%; background: #e5e7eb; height: 8px; border-radius: 4px; margin-top: 8px; overflow: hidden;'>
+                                            <div style='width: " . ($score * 20) . "%; background: ${color}; height: 100%; transition: width 0.5s ease;'></div>
+                                        </div>
+                                    ");
+                                }),
+
+                            Forms\Components\Placeholder::make('abc_xyz_class')
+                                ->label('ABC / XYZ Клас')
+                                ->content(function ($record): HtmlString {
+                                    if (!$record || !$record->abc_class) {
+                                        return new HtmlString('<span class="text-gray-500">Немає даних</span>');
+                                    }
+                                    
+                                    $class = $record->abc_class . $record->xyz_class;
+                                    
+                                    // Задаємо колір плашки залежно від літери А, В чи С
+                                    $colorClass = match ($record->abc_class) {
+                                        'A' => 'bg-success-500/10 text-success-700 dark:text-success-400',
+                                        'B' => 'bg-warning-500/10 text-warning-700 dark:text-warning-400',
+                                        default => 'bg-gray-500/10 text-gray-700 dark:text-gray-400',
+                                    };
+
+                                    return new \Illuminate\Support\HtmlString("
+                                        <div class='flex items-center gap-2'>
+                                            <span class='px-2.5 py-1 text-sm font-bold rounded-md {$colorClass}'>
+                                                {$class}
+                                            </span>
+                                        </div>
+                                    ");
+                                }),
+                            // 2. Страховий запас
+                            Forms\Components\Placeholder::make('display_safety_stock')
+                                ->label('Страховий запас')
+                                ->content(function ($record): HtmlString {
+                                    if (!$record) return new HtmlString('0 шт.');
+                                    return new \Illuminate\Support\HtmlString("<strong>{$record->safety_stock}</strong> шт.");
+                                }),
+
+                            Forms\Components\Placeholder::make('purchase_status')
+                                ->label('Статус складу')
+                                ->content(function ($record): \Illuminate\Support\HtmlString {
+                                    if (!$record) return new \Illuminate\Support\HtmlString('-');
+                                    
+                                    // Логіка визначення дефіциту
+                                    if ($record->quantity <= $record->safety_stock) {
+                                        return new \Illuminate\Support\HtmlString('<span class="text-danger-600 dark:text-danger-400 font-bold">🔴 КРИТИЧНО (Час замовляти)</span>');
+                                    }
+                                    
+                                    if ($record->quantity <= ($record->safety_stock * 1.2)) {
+                                        return new \Illuminate\Support\HtmlString('<span class="text-warning-600 dark:text-warning-400 font-bold">🟡 УВАГА (Запас закінчується)</span>');
+                                    }
+                                    
+                                    return new \Illuminate\Support\HtmlString('<span class="text-success-600 dark:text-success-400 font-bold">🟢 ДОСТАТНЬО (Запас в нормі)</span>');
+                                }),
+                                        
+                        ])
                     ])
                     ->columnSpan(['lg' => 2]),
 
@@ -153,7 +204,7 @@ class ProductResource extends Resource
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('popularity')
-                    ->label('Поп.')
+                    ->label('Популярність')
                     ->numeric(1) // Округлює до 1 знака після коми (наприклад, 4.3)
                     ->badge()    // Робить поле у вигляді красивого бейджа
                     ->icon(fn ($state) => $state >= 4.0 ? 'heroicon-m-fire' : 'heroicon-m-chart-bar')
@@ -209,28 +260,13 @@ class ProductResource extends Resource
                         Product::AVAILABILITY_IN_STOCK => 'В наявності',
                         Product::AVAILABILITY_ON_ORDER => 'Під замовлення',
                         Product::AVAILABILITY_OUT_OF_STOCK => 'Немає в наявності',
-                    ]),
-
-                Tables\Columns\TextColumn::make('class')
-                    ->label('Клас')
-                    ->state(function ($record): string {
-                        return ($record->abc_class ?? '-') . ($record->xyz_class ?? '-');
-                    })
-                    ->badge()
-                    ->color(fn (string $state): string => match (substr($state, 0, 1)) {
-                        'A' => 'success', // Зелений для топів
-                        'B' => 'warning', // Жовтий для середніх
-                        'C' => 'gray',    // Сірий для решти
-                        default => 'gray',
-                    }),
-
+                    ])
+                    ,
 
                 Tables\Columns\TextColumn::make('price')
                     ->label('Ціна')
                     ->money('UAH')
-                    ->sortable(), 
-                    
-                
+                    ->sortable(),    
             ])
             ->defaultSort('popularity', 'desc')
             ->filters([
