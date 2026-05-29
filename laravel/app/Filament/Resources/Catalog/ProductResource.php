@@ -227,9 +227,9 @@ class ProductResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'A' => '80% виторгу',
-                        'B' => '15% виторгу',
-                        'C' => '5% виторгу',
+                        'A' => '80%',
+                        'B' => '15% ',
+                        'C' => '5% ',
                         default => $state,
                     }),
 
