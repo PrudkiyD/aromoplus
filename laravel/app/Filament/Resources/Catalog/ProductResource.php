@@ -204,7 +204,7 @@ class ProductResource extends Resource
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('popularity')
-                    ->label('Популярність')
+                    ->label('Поп.')
                     ->numeric(1) // Округлює до 1 знака після коми (наприклад, 4.3)
                     ->badge()    // Робить поле у вигляді красивого бейджа
                     ->icon(fn ($state) => $state >= 4.0 ? 'heroicon-m-fire' : 'heroicon-m-chart-bar')
