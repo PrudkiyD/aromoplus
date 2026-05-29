@@ -217,7 +217,7 @@ class ProductResource extends Resource
                     ->money('UAH')
                     ->sortable(),    
             ])
-            ->defaultSort('popularity', 'desc')
+            ->defaultSort('popularity', 'asc')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_published')
                     ->label('Опубліковано')
