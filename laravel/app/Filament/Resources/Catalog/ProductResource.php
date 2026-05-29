@@ -201,7 +201,8 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\IconColumn::make('is_published')
                     ->label('👁')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('popularity')
                     ->label('Поп.')
