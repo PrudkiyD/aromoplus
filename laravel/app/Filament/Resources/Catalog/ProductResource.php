@@ -101,9 +101,9 @@ class ProductResource extends Resource
 
                             Forms\Components\Placeholder::make('abc_xyz_class')
                                 ->label('ABC / XYZ Клас')
-                                ->content(function ($record): HtmlString {
+                                ->content(function ($record): \Illuminate\Support\HtmlString {
                                     if (!$record || !$record->abc_class) {
-                                        return new HtmlString('<span class="text-gray-500">Немає даних</span>');
+                                        return new \Illuminate\Support\HtmlString('<span class="text-gray-500">Немає даних</span>');
                                     }
                                     
                                     $class = $record->abc_class . $record->xyz_class;
@@ -126,8 +126,8 @@ class ProductResource extends Resource
                             // 2. Страховий запас
                             Forms\Components\Placeholder::make('display_safety_stock')
                                 ->label('Страховий запас')
-                                ->content(function ($record): HtmlString {
-                                    if (!$record) return new HtmlString('0 шт.');
+                                ->content(function ($record): \Illuminate\Support\HtmlString {
+                                    if (!$record) return new \Illuminate\Support\HtmlString('0 шт.');
                                     return new \Illuminate\Support\HtmlString("<strong>{$record->safety_stock}</strong> шт.");
                                 }),
 
