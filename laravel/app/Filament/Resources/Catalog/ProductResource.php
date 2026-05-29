@@ -327,6 +327,22 @@ class ProductResource extends Resource
                     ->preload()
                     ->multiple()
                     ->searchable(),
+
+                Tables\Filters\SelectFilter::make('abc_class')
+                    ->label('ABC Клас (Оборот)')
+                    ->options([
+                        'A' => 'Клас A (Високий оборот)',
+                        'B' => 'Клас B (Середній оборот)',
+                        'C' => 'Клас C (Низький оборот)',
+                    ]),
+
+                Tables\Filters\SelectFilter::make('xyz_class')
+                    ->label('XYZ Клас (Прогнозованість)')
+                    ->options([
+                        'X' => 'Клас X (Стабільний попит)',
+                        'Y' => 'Клас Y (Сезонний/Мінливий)',
+                        'Z' => 'Клас Z (Випадковий/Дефіцит)',
+                    ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
