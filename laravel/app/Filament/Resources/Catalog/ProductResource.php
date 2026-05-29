@@ -291,9 +291,6 @@ class ProductResource extends Resource
                     ->multiple()
                     ->searchable(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
