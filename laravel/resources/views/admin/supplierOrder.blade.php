@@ -24,21 +24,32 @@
         overflow: hidden;
     }
 
+    /* Контейнер для скролу */
+    .table-wrapper{
+        overflow-x: auto;
+        max-height: 80vh;
+    }
+
     .card-body{
         padding: 0;
     }
 
     .supplier-table{
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 1000px;
     }
 
-    .supplier-table thead{
+    /* ФІКСОВАНИЙ HEADER */
+    .supplier-table thead th{
+        position: sticky;
+        top: 0;
+        z-index: 10;
+
         background: linear-gradient(135deg, #2563eb, #1d4ed8);
         color: white;
-    }
 
-    .supplier-table thead th{
         padding: 18px 14px;
         text-align: left;
         font-size: 14px;
@@ -61,6 +72,7 @@
         font-size: 14px;
         color: #374151;
         vertical-align: middle;
+        background: white;
     }
 
     .product-name{
@@ -108,10 +120,6 @@
 
     @media(max-width: 1100px){
 
-        .card{
-            overflow-x: auto;
-        }
-
         .supplier-table{
             min-width: 1000px;
         }
@@ -128,85 +136,89 @@
 
         <div class="card-body">
 
-            <table class="supplier-table">
+            <div class="table-wrapper">
 
-                <thead>
-                    <tr>
-                        <th>Зображення</th>
-                        <th>Товар</th>
-                        <th>SKU</th>
-                        <th>Залишок</th>
-                        <th>Продано за 90 днів</th>
-                        <th>Прогноз на 3 міс.</th>
-                        <th>Треба замовити</th>
-                    </tr>
-                </thead>
+                <table class="supplier-table">
 
-                <tbody>
+                    <thead>
+                        <tr>
+                            <th>Зображення</th>
+                            <th>Товар</th>
+                            <th>SKU</th>
+                            <th>Залишок</th>
+                            <th>Продано за 90 днів</th>
+                            <th>Прогноз на 3 міс.</th>
+                            <th>Треба замовити</th>
+                        </tr>
+                    </thead>
 
-                    @php
-                        $hasProducts = false;
-                    @endphp
+                    <tbody>
 
-                    @foreach($products as $product)
+                        @php
+                            $hasProducts = false;
+                        @endphp
 
-                        @if($product->to_order > 0)
+                        @foreach($products as $product)
 
-                            @php
-                                $hasProducts = true;
-                            @endphp
+                            @if($product->to_order > 0)
+
+                                @php
+                                    $hasProducts = true;
+                                @endphp
+
+                                <tr>
+
+                                    <td>
+                                        <img src="/storage/{{ $product->main_image }}" width="50" alt="">
+                                    </td>
+
+                                    <td class="product-name">
+                                        {{ $product->name }}
+                                    </td>
+
+                                    <td class="sku">
+                                        {{ $product->internal_sku }}
+                                    </td>
+
+                                    <td class="stock">
+                                        {{ $product->quantity }}
+                                    </td>
+
+                                    <td class="sales">
+                                        {{ $product->sold_90 }}
+                                    </td>
+
+                                    <td class="forecast">
+                                        {{ $product->forecast_3_months }}
+                                    </td>
+
+                                    <td>
+                                        <span class="to-order">
+                                            {{ $product->to_order }}
+                                        </span>
+                                    </td>
+
+                                </tr>
+
+                            @endif
+
+                        @endforeach
+
+                        @if(!$hasProducts)
 
                             <tr>
-
-                                <td>
-                                    <img src="/storage/{{ $product->main_image }}" width="50" alt="">
+                                <td colspan="7" class="empty">
+                                    Усі товари в достатній кількості
                                 </td>
-
-                                <td class="product-name">
-                                    {{ $product->name }}
-                                </td>
-
-                                <td class="sku">
-                                    {{ $product->internal_sku }}
-                                </td>
-
-                                <td class="stock">
-                                    {{ $product->quantity }}
-                                </td>
-
-                                <td class="sales">
-                                    {{ $product->sold_90 }}
-                                </td>
-
-                                <td class="forecast">
-                                    {{ $product->forecast_3_months }}
-                                </td>
-
-                                <td>
-                                    <span class="to-order">
-                                        {{ $product->to_order }}
-                                    </span>
-                                </td>
-
                             </tr>
 
                         @endif
 
-                    @endforeach
+                    </tbody>
 
-                    @if(!$hasProducts)
+                </table>
 
-                        <tr>
-                            <td colspan="7" class="empty">
-                                Усі товари в достатній кількості
-                            </td>
-                        </tr>
-
-                    @endif
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
