@@ -1,5 +1,3 @@
-@section('content')
-
 <div class="container-fluid">
 
     <h1 class="mb-4">Замовлення постачальнику</h1>
@@ -67,5 +65,3 @@
     </div>
 
 </div>
-
-@endsection
