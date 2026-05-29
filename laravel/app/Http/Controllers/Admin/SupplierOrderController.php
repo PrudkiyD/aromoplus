@@ -20,10 +20,7 @@ class SupplierOrderController extends Controller
     public function supplierOrder()
     {
 
-        return response()->json([
-                'status' => 'ok',
-                'user' => auth()->user()->email
-            ]);
+        return view('admin.supplierOrder');
     }
     
 }
