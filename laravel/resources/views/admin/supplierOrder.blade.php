@@ -132,7 +132,7 @@
 
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Зображення</th>
                         <th>Товар</th>
                         <th>SKU</th>
                         <th>Залишок</th>
@@ -159,7 +159,7 @@
                             <tr>
 
                                 <td>
-                                    #{{ $product->id }}
+                                    <img src="/storage/{{ $product->main_image }}" width="50" alt="">
                                 </td>
 
                                 <td class="product-name">
