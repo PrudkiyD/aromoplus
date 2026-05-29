@@ -153,7 +153,7 @@ class ProductResource extends Resource
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('popularity')
-                    ->label('Популярність')
+                    ->label('Поп.')
                     ->numeric(1) // Округлює до 1 знака після коми (наприклад, 4.3)
                     ->badge()    // Робить поле у вигляді красивого бейджа
                     ->icon(fn ($state) => $state >= 4.0 ? 'heroicon-m-fire' : 'heroicon-m-chart-bar')
@@ -209,13 +209,28 @@ class ProductResource extends Resource
                         Product::AVAILABILITY_IN_STOCK => 'В наявності',
                         Product::AVAILABILITY_ON_ORDER => 'Під замовлення',
                         Product::AVAILABILITY_OUT_OF_STOCK => 'Немає в наявності',
-                    ])
-                    ,
+                    ]),
+
+                Tables\Columns\TextColumn::make('class')
+                    ->label('Клас')
+                    ->state(function ($record): string {
+                        return ($record->abc_class ?? '-') . ($record->xyz_class ?? '-');
+                    })
+                    ->badge()
+                    ->color(fn (string $state): string => match (substr($state, 0, 1)) {
+                        'A' => 'success', // Зелений для топів
+                        'B' => 'warning', // Жовтий для середніх
+                        'C' => 'gray',    // Сірий для решти
+                        default => 'gray',
+                    }),
+
 
                 Tables\Columns\TextColumn::make('price')
                     ->label('Ціна')
                     ->money('UAH')
-                    ->sortable(),    
+                    ->sortable(), 
+                    
+                
             ])
             ->defaultSort('popularity', 'desc')
             ->filters([
