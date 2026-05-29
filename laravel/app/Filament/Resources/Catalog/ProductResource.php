@@ -245,9 +245,9 @@ class ProductResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'X' => '8–12 разів/міс',
-                        'Y' => '4–7 разів/міс',
-                        'Z' => '0–3 разів/міс',
+                        'X' => '8–12 р/р',
+                        'Y' => '4–7 р/р',
+                        'Z' => '0–3 р/р',
                         default => $state,
                     }),
 
