@@ -238,6 +238,117 @@ class ListProducts extends ListRecords
         }
     }
 
+    public function updateClassSafe()
+    {
+        // 1. Збираємо статистику успішних замовлень за останні 365 днів
+        $oneYearAgo = now()->subDays(365);
+        
+        $salesData = \App\Models\Order\ProductItem::query()
+            ->whereHas('order', function ($query) use ($oneYearAgo) {
+                $query->where('status', \App\Models\Order\Order::STATUS_SUCCESSFUL)
+                    ->where('created_at', '>=', $oneYearAgo);
+            })
+            ->select('product_id')
+            ->selectRaw('SUM(quantity * price) as total_revenue') // Для ABC
+            ->selectRaw('COUNT(DISTINCT DATE_FORMAT(created_at, "%Y-%m")) as months_count') // Для XYZ
+            ->selectRaw('SUM(quantity) / 365 as daily_velocity') // Середня швидкість продажів на день
+            ->groupBy('product_id')
+            ->get()
+            ->keyBy('product_id');
+
+        // Якщо за рік замовлень взагалі не було — зупиняємо, щоб не занулити наявні дані
+        if ($salesData->isEmpty()) {
+            return;
+        }
+
+        // 2. Сортуємо для ABC-аналізу за спаданням виторгу
+        $sortedForAbc = $salesData->sortByDesc('total_revenue');
+        $totalRevenueAll = $sortedForAbc->sum('total_revenue');
+        
+        $runningSum = 0;
+        $abcMap = [];
+        $xyzMap = [];
+        $velocityMap = [];
+
+        foreach ($sortedForAbc as $productId => $data) {
+            $runningSum += $data->total_revenue;
+            $percentage = ($runningSum / $totalRevenueAll) * 100;
+
+            // Розподіл ABC (80% / 15% / 5%)
+            if ($percentage <= 80) {
+                $abcMap[$productId] = 'A';
+            } elseif ($percentage <= 95) {
+                $abcMap[$productId] = 'B';
+            } else {
+                $abcMap[$productId] = 'C';
+            }
+
+            $xyzMap[$productId] = $data->months_count;
+            $velocityMap[$productId] = $data->daily_velocity;
+        }
+
+        // 3. Порційно (chunk) оновлюємо всі товари в базі даних
+        Product::query()->chunk(200, function ($products) use ($abcMap, $xyzMap, $velocityMap) {
+            foreach ($products as $product) {
+                $id = $product->id;
+
+                // Якщо запчастину за рік жодного разу не купили — за замовчуванням даємо C і Z
+                $abc = $abcMap[$id] ?? 'C';
+                $monthsWithSales = $xyzMap[$id] ?? 0;
+                $velocity = $velocityMap[$id] ?? 0;
+
+                // Логіка XYZ (ваше правило регулярності)
+                if ($monthsWithSales >= 11) {
+                    $xyz = 'X'; // Щомісяця
+                } elseif ($monthsWithSales >= 4) {
+                    $xyz = 'Y'; // Раз на 3 місяці (квартал)
+                } else {
+                    $xyz = 'Z'; // Всі інші (хаос / рідкісні)
+                }
+
+                // Визначаємо кількість днів для страхового запасу (safety_stock)
+                $safetyDays = 0;
+                $combination = $abc . $xyz;
+
+                switch ($combination) {
+                    case 'AX':
+                        $safetyDays = 14; // Стабільний ТОП (подушка 2 тижні)
+                        break;
+                    case 'AY':
+                    case 'AZ':
+                        $safetyDays = 45; // Нестабільний ТОП — як ваш носик (подушка 1.5 міс)
+                        break;
+                    case 'BX':
+                    case 'BY':
+                        $safetyDays = 21; // Середній стабільний (3 тижні)
+                        break;
+                    case 'BZ':
+                        $safetyDays = 30; // Середній нестабільний (1 місяць)
+                        break;
+                    case 'CX':
+                    case 'CY':
+                        $safetyDays = 60; // Ходова копійчана дрібнота (беремо на 2 міс наперед)
+                        break;
+                    case 'CZ':
+                    default:
+                        $safetyDays = 0; // Рідкісні запчастини (страховий запас не потрібен)
+                        break;
+                }
+
+                // Розраховуємо кінцеву кількість штук для страхового запасу
+                $safetyStock = (int) ceil($velocity * $safetyDays);
+
+                // Оновлюємо три поля в базі даних без зачіпання timestamps
+                $product->timestamps = false;
+                $product->update([
+                    'abc_class' => $abc,
+                    'xyz_class' => $xyz,
+                    'safety_stock' => $safetyStock,
+                ]);
+            }
+        });
+    }
+
 
     protected function getHeaderActions(): array
     {
@@ -248,10 +359,11 @@ class ListProducts extends ListRecords
                 ->icon('heroicon-o-arrow-path') // Змінив на іконку оновлення
                 ->requiresConfirmation() // Додасть вікно підтвердження
                 ->modalHeading('Оновлення каталогу товарів')
-                ->modalDescription('Оновити наявність, кількість, ціни та прорахувати популярність товарів?')
+                ->modalDescription('Оновити наявність, кількість, ціни та прорахувати популярність товарів, ABC\XYZ, страховий залишок?')
                 ->action(function(){ 
                     $this->updateProduct();
                     $this->updatePopularity();
+                    $this->updateClassSafe();
                 }),
                 
             Actions\CreateAction::make(),

@@ -13,6 +13,9 @@ class Product extends Model
     public $timestamps = false;
     protected $fillable = [
         'popularity',
+        'abc_class',
+        'xyz_class',
+        'safety_stock',
         'main_image',
         'availability',
         'is_published',
