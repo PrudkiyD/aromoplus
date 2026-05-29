@@ -11,6 +11,7 @@ use App\Http\Controllers\Main\FeedbackController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\novaPoshtaController;
+use App\Http\Controllers\Admin\SupplierOrderController;
 use Filament\Http\Middleware\Authenticate;
 
 #Головна
@@ -70,4 +71,5 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::get('/admin/update-total/{order_id}/{total}/', [AdminController::class, 'updateTotal']);
         Route::get('/admin/print-blanck/{blanck_id}/{pay_id}/', [AdminController::class, 'printBlanck']);
         Route::get('/admin/nova-poshta/create', [novaPoshtaController::class, 'novaPoshta']);
+        Route::get('/admin/supplier-order', [SupplierOrderController::class, 'supplierOrder']);
 });
