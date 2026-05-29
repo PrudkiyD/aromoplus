@@ -69,10 +69,10 @@ class ProductResource extends Resource
                                     ->rows(3)
                                     ->required(),
                             ])->columns(1),
-                        Forms\Components\Section::make('Аналітика')
+                        Forms\Components\Section::make('Аналітика (365 днів)')
                         ->schema([
                             Forms\Components\Placeholder::make('popularity_status')
-                                ->label('Аналітика популярності (365 днів)')
+                                ->label('Популярність')
                                 ->content(function (Product $record): \Illuminate\Support\HtmlString {
                                     $score = $record->popularity ?? 0.0;
                                     
