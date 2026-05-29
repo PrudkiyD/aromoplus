@@ -246,14 +246,14 @@ class ListProducts extends ListRecords
         $oneYearAgo = now()->subDays(365);
 
         $salesData = \App\Models\Order\ProductItem::query()
-            ->join('order_order', 'order_order.id', '=', 'product_items.order_id') // виправлення #3: join для доступу до дати замовлення
+            ->join('order_order', 'order_order.id', '=', 'order_productitem.order_id') // виправлення #3: join для доступу до дати замовлення
             ->where('order_order.status', \App\Models\Order\Order::STATUS_SUCCESSFUL)
             ->where('order_order.created_at', '>=', $oneYearAgo)
-            ->select('product_items.product_id')
-            ->selectRaw('SUM(product_items.quantity * product_items.price) as total_revenue')
+            ->select('order_productitem.product_id')
+            ->selectRaw('SUM(order_productitem.quantity * order_productitem.price) as total_revenue')
             ->selectRaw('COUNT(DISTINCT DATE_FORMAT(order_order.created_at, "%Y-%m")) as months_count') // виправлення #3:
-            ->selectRaw('SUM(product_items.quantity) / 365 as daily_velocity')
-            ->groupBy('product_items.product_id')
+            ->selectRaw('SUM(order_productitem.quantity) / 365 as daily_velocity')
+            ->groupBy('order_productitem.product_id')
             ->get()
             ->keyBy('product_id');
 
