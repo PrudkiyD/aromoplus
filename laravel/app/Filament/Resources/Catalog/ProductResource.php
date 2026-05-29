@@ -201,8 +201,7 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\IconColumn::make('is_published')
                     ->label('👁')
-                    ->boolean()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->boolean(),
 
                 Tables\Columns\TextColumn::make('popularity')
                     ->label('Поп.')
@@ -215,6 +214,16 @@ class ProductResource extends Resource
                         default => 'gray',          // Сірий для низької активності
                     })
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('abc_class')
+                    ->label('ABC')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                
+                Tables\Columns\TextColumn::make('xyz_class')
+                    ->label('XYZ')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 ImageColumn::make('main_image')
                     ->label('Фото')
