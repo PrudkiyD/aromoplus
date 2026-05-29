@@ -125,51 +125,116 @@ class ListProducts extends ListRecords
         }
     }
 
-    public function updatePopularity(){
+    public function updatePopularity()
+    {
         $dateLimit = now()->subDays(365);
 
-        // 1. Збираємо статистику по кожному товару
-        $stats = Product::all()->map(function ($product) use ($dateLimit) {
-            // Рахуємо унікальні перегляди через модель/зв'язок View
-            $viewsCount = $product->views()->where('created_at', '>=', $dateLimit)->count();
+        // -------------------------------------------------
+        // 1. ЗБИРАЄМО СТАТИСТИКУ
+        // -------------------------------------------------
 
-            // Рахуємо кількість замовлень та проданих штук
+        $stats = Product::all()->map(function ($product) use ($dateLimit) {
+
+            // Перегляди товару за 365 днів
+            $viewsCount = $product->views()
+                ->where('created_at', '>=', $dateLimit)
+                ->count();
+
+            // Замовлення + кількість проданих штук
             $orderStats = DB::table('order_productitem')
                 ->where('product_id', $product->id)
                 ->where('created_at', '>=', $dateLimit)
                 ->select(
                     DB::raw('COUNT(DISTINCT order_id) as orders_count'),
                     DB::raw('SUM(quantity) as items_count')
-                )->first();
+                )
+                ->first();
+
+            $orders = $orderStats->orders_count ?? 0;
+            $items  = $orderStats->items_count ?? 0;
+
+            // -------------------------------------------------
+            // ЗМІНА №1
+            // ДОДАВ КОНВЕРСІЮ
+            // -------------------------------------------------
+
+            $conversion = $viewsCount > 0
+                ? $orders / $viewsCount
+                : 0;
 
             return [
-                'id'      => $product->id,
-                'orders'  => $orderStats->orders_count ?? 0,
-                'items'   => $orderStats->items_count ?? 0,
-                'views'   => $viewsCount,
+                'id'         => $product->id,
+                'orders'     => $orders,
+                'items'      => $items,
+                'views'      => $viewsCount,
+                'conversion' => $conversion,
             ];
         });
 
-        // 2. Знаходимо максимуми по всьому сайту для лінійної нормалізації
-        $maxOrders = max($stats->pluck('orders')->toArray()) ?: 1;
-        $maxItems  = max($stats->pluck('items')->toArray()) ?: 1;
-        $maxViews  = max($stats->pluck('views')->toArray()) ?: 1;
+        // -------------------------------------------------
+        // 2. ЗНАХОДИМО МАКСИМУМИ
+        // -------------------------------------------------
 
-        // 3. Рахуємо бали та оновлюємо поле popularity у базі даних
+        $maxOrders     = max($stats->pluck('orders')->toArray()) ?: 1;
+        $maxItems      = max($stats->pluck('items')->toArray()) ?: 1;
+        $maxConversion = max($stats->pluck('conversion')->toArray()) ?: 1;
+
+        // -------------------------------------------------
+        // 3. РАХУЄМО POPULARITY
+        // -------------------------------------------------
+
         foreach ($stats as $stat) {
-            // Приводимо кожну метрику до шкали від 0 до 5
-            $scoreOrders = ($stat['orders'] / $maxOrders) * 5;
-            $scoreItems  = ($stat['items'] / $maxItems) * 5;
-            $scoreViews  = ($stat['views'] / $maxViews) * 5;
 
-            // Вага для B2B: 40% — замовлення, 40% — штуки, 20% — перегляди
-            $popularity = ($scoreOrders * 0.4) + ($scoreItems * 0.4) + ($scoreViews * 0.2);
-            
-            // Округлюємо до одного знака після коми (наприклад, 4.2)
+            // -------------------------------------------------
+            // ЗМІНА №2
+            // LOG НОРМАЛІЗАЦІЯ
+            // -------------------------------------------------
+
+            $scoreOrders = (
+                log(1 + $stat['orders']) /
+                log(1 + $maxOrders)
+            ) * 5;
+
+            $scoreItems = (
+                log(1 + $stat['items']) /
+                log(1 + $maxItems)
+            ) * 5;
+
+            $scoreConversion = (
+                log(1 + $stat['conversion']) /
+                log(1 + $maxConversion)
+            ) * 5;
+
+            // -------------------------------------------------
+            // ЗМІНА №3
+            // НОВІ ВАГИ
+            // -------------------------------------------------
+
+            $popularity =
+                ($scoreOrders * 0.6) +
+                ($scoreItems * 0.3) +
+                ($scoreConversion * 0.1);
+
+            // -------------------------------------------------
+            // ЗМІНА №4
+            // МІНІМАЛЬНИЙ ПОРІГ
+            // -------------------------------------------------
+
+            if ($stat['orders'] < 3) {
+                $popularity = 0;
+            }
+
+            // Округлення
             $popularity = round($popularity, 1);
 
-            // Оновлюємо товар у базі
-            Product::where('id', $stat['id'])->update(['popularity' => $popularity]);
+            // Захист від значень > 5
+            $popularity = min($popularity, 5);
+
+            // Оновлення товару
+            Product::where('id', $stat['id'])
+                ->update([
+                    'popularity' => $popularity
+                ]);
         }
     }
 
