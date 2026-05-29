@@ -4,6 +4,8 @@ namespace App\Filament\Resources\Catalog\ProductResource\Pages;
 
 use App\Filament\Resources\Catalog\ProductResource;
 use App\Models\Catalog\Product;
+use App\Models\Order\ProductItem;
+use App\Models\Order\Order;
 use Illuminate\Support\Facades\DB;
 use Filament\Actions;
 use Filament\Actions\Action;
@@ -242,29 +244,27 @@ class ListProducts extends ListRecords
     {
         // 1. Збираємо статистику успішних замовлень за останні 365 днів
         $oneYearAgo = now()->subDays(365);
-        
+
         $salesData = \App\Models\Order\ProductItem::query()
-            ->whereHas('order', function ($query) use ($oneYearAgo) {
-                $query->where('status', \App\Models\Order\Order::STATUS_SUCCESSFUL)
-                    ->where('created_at', '>=', $oneYearAgo);
-            })
-            ->select('product_id')
-            ->selectRaw('SUM(quantity * price) as total_revenue') // Для ABC
-            ->selectRaw('COUNT(DISTINCT DATE_FORMAT(created_at, "%Y-%m")) as months_count') // Для XYZ
-            ->selectRaw('SUM(quantity) / 365 as daily_velocity') // Середня швидкість продажів на день
-            ->groupBy('product_id')
+            ->join('orders', 'orders.id', '=', 'product_items.order_id') // виправлення #3: join для доступу до дати замовлення
+            ->where('orders.status', \App\Models\Order\Order::STATUS_SUCCESSFUL)
+            ->where('orders.created_at', '>=', $oneYearAgo)
+            ->select('product_items.product_id')
+            ->selectRaw('SUM(product_items.quantity * product_items.price) as total_revenue')
+            ->selectRaw('COUNT(DISTINCT DATE_FORMAT(orders.created_at, "%Y-%m")) as months_count') // виправлення #3: беремо дату з orders
+            ->selectRaw('SUM(product_items.quantity) / 365 as daily_velocity')
+            ->groupBy('product_items.product_id')
             ->get()
             ->keyBy('product_id');
 
-        // Якщо за рік замовлень взагалі не було — зупиняємо, щоб не занулити наявні дані
         if ($salesData->isEmpty()) {
             return;
         }
 
-        // 2. Сортуємо для ABC-аналізу за спаданням виторгу
+        // 2. ABC-аналіз за виторгом
         $sortedForAbc = $salesData->sortByDesc('total_revenue');
         $totalRevenueAll = $sortedForAbc->sum('total_revenue');
-        
+
         $runningSum = 0;
         $abcMap = [];
         $xyzMap = [];
@@ -274,7 +274,6 @@ class ListProducts extends ListRecords
             $runningSum += $data->total_revenue;
             $percentage = ($runningSum / $totalRevenueAll) * 100;
 
-            // Розподіл ABC (80% / 15% / 5%)
             if ($percentage <= 80) {
                 $abcMap[$productId] = 'A';
             } elseif ($percentage <= 95) {
@@ -287,62 +286,61 @@ class ListProducts extends ListRecords
             $velocityMap[$productId] = $data->daily_velocity;
         }
 
-        // 3. Порційно (chunk) оновлюємо всі товари в базі даних
+        // 3. Оновлення товарів
         Product::query()->chunk(200, function ($products) use ($abcMap, $xyzMap, $velocityMap) {
             foreach ($products as $product) {
                 $id = $product->id;
 
-                // Якщо запчастину за рік жодного разу не купили — за замовчуванням даємо C і Z
                 $abc = $abcMap[$id] ?? 'C';
                 $monthsWithSales = $xyzMap[$id] ?? 0;
                 $velocity = $velocityMap[$id] ?? 0;
 
-                // Логіка XYZ (ваше правило регулярності)
-                if ($monthsWithSales >= 11) {
-                    $xyz = 'X'; // Щомісяця
-                } elseif ($monthsWithSales >= 4) {
-                    $xyz = 'Y'; // Раз на 3 місяці (квартал)
-                } else {
-                    $xyz = 'Z'; // Всі інші (хаос / рідкісні)
+                // виправлення #1 і #2: пороги через відсотки від 12 місяців
+                $totalMonths = 12;
+                $ratio = $monthsWithSales / $totalMonths;
+
+                if ($ratio >= 0.67) {       // 8+ місяців із 12 — стабільний
+                    $xyz = 'X';
+                } elseif ($ratio >= 0.33) { // 4–7 місяців — нерегулярний
+                    $xyz = 'Y';
+                } else {                    // 0–3 місяці — хаотичний
+                    $xyz = 'Z';
                 }
 
-                // Визначаємо кількість днів для страхового запасу (safety_stock)
                 $safetyDays = 0;
                 $combination = $abc . $xyz;
 
                 switch ($combination) {
                     case 'AX':
-                        $safetyDays = 14; // Стабільний ТОП (подушка 2 тижні)
+                        $safetyDays = 14;
                         break;
                     case 'AY':
                     case 'AZ':
-                        $safetyDays = 45; // Нестабільний ТОП — як ваш носик (подушка 1.5 міс)
+                        $safetyDays = 45;
                         break;
                     case 'BX':
                     case 'BY':
-                        $safetyDays = 21; // Середній стабільний (3 тижні)
+                        $safetyDays = 21;
                         break;
                     case 'BZ':
-                        $safetyDays = 30; // Середній нестабільний (1 місяць)
+                        $safetyDays = 30;
                         break;
                     case 'CX':
                     case 'CY':
-                        $safetyDays = 60; // Ходова копійчана дрібнота (беремо на 2 міс наперед)
+                        $safetyDays = 60;
                         break;
                     case 'CZ':
                     default:
-                        $safetyDays = 0; // Рідкісні запчастини (страховий запас не потрібен)
+                        $safetyDays = 0;
                         break;
                 }
 
-                // Розраховуємо кінцеву кількість штук для страхового запасу
                 $safetyStock = (int) ceil($velocity * $safetyDays);
 
-                // Оновлюємо три поля в базі даних без зачіпання timestamps
                 $product->timestamps = false;
                 $product->update([
-                    'abc_class' => $abc,
-                    'xyz_class' => $xyz,
+                    'abc_class'    => $abc,
+                    'xyz_class'    => $xyz,
                     'safety_stock' => $safetyStock,
                 ]);
             }
