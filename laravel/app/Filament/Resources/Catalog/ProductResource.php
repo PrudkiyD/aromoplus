@@ -37,13 +37,13 @@ class ProductResource extends Resource
                                         
                                         // Визначаємо текстовий статус
                                         $status = 'Низька активність';
-                                        $color = '#9ca3af'; 
+                                        $color = '#9ca3af'; // сірий
                                         if ($score >= 4.0) {
                                             $status = '🔥 Висока активність';
-                                            $color = '#58ef44';
+                                            $color = '#ef4444'; // червоний
                                         } elseif ($score >= 2.5) {
                                             $status = '📈 Середня активність';
-                                            $color = '#f59e0b';
+                                            $color = '#f59e0b'; // помаранчевий
                                         }
 
                                         // Рендеримо красивий HTML-індикатор прогресу всередині картки Filament
