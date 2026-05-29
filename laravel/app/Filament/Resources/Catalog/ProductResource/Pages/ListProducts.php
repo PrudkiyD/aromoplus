@@ -312,18 +312,18 @@ class ListProducts extends ListRecords
 
                 switch ($combination) {
                     case 'AX':
-                        $safetyDays = 14;
+                        $safetyDays = 30;
                         break;
                     case 'AY':
                     case 'AZ':
-                        $safetyDays = 45;
+                        $safetyDays = 90;
                         break;
                     case 'BX':
                     case 'BY':
-                        $safetyDays = 21;
+                        $safetyDays = 40;
                         break;
                     case 'BZ':
-                        $safetyDays = 30;
+                        $safetyDays = 60;
                         break;
                     case 'CX':
                     case 'CY':
