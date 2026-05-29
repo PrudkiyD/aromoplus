@@ -352,7 +352,7 @@ class ListProducts extends ListRecords
     {
         return [
             Action::make('import')
-                ->label('Оновити каталог')
+                ->label('Оновити')
                 ->color('gray')
                 ->icon('heroicon-o-arrow-path') // Змінив на іконку оновлення
                 ->requiresConfirmation() // Додасть вікно підтвердження

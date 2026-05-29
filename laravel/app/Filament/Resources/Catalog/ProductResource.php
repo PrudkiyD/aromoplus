@@ -218,12 +218,38 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('abc_class')
                     ->label('ABC')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'A' => 'success',
+                        'B' => 'warning',
+                        'C' => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'A' => '80% виторгу',
+                        'B' => '15% виторгу',
+                        'C' => '5% виторгу',
+                        default => $state,
+                    }),
+
                 Tables\Columns\TextColumn::make('xyz_class')
                     ->label('XYZ')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'X' => 'success',
+                        'Y' => 'warning',
+                        'Z' => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'X' => '8–12 міс',
+                        'Y' => '4–7 міс',
+                        'Z' => '0–3 міс',
+                        default => $state,
+                    }),
 
                 ImageColumn::make('main_image')
                     ->label('Фото')
