@@ -39,10 +39,10 @@ class ProductResource extends Resource
                                         $status = 'Низька активність';
                                         $color = '#9ca3af'; // сірий
                                         if ($score >= 4.0) {
-                                            $status = '🔥 Топ продажів та переглядів';
+                                            $status = '🔥 Висока активність';
                                             $color = '#ef4444'; // червоний
                                         } elseif ($score >= 2.5) {
-                                            $status = '📈 Стабільний попит';
+                                            $status = '📈 Середня активність';
                                             $color = '#f59e0b'; // помаранчевий
                                         }
 
