@@ -247,14 +247,6 @@ class ProductResource extends Resource
             ]);
     }
 
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->orderBy('is_published', 'desc')
-            ->orderBy('availability', 'asc') 
-            ->orderBy('quantity', 'desc');
-    }
-
     public static function getRelations(): array
     {
         return [
