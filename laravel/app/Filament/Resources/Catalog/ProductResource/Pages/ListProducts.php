@@ -312,26 +312,32 @@ class ListProducts extends ListRecords
 
                 switch ($combination) {
                     case 'AX':
-                        $safetyDays = 180;
+                        $safetyDays = 90;  // 3 місяці — ходовий стабільний
                         break;
                     case 'AY':
+                        $safetyDays = 75;  // ходовий, але нерегулярний
+                        break;
                     case 'AZ':
-                        $safetyDays = 90;
+                        $safetyDays = 60;  // ходовий, хаотичний — покриваємо 1.5 LT
                         break;
                     case 'BX':
+                        $safetyDays = 60;  // середній стабільний
+                        break;
                     case 'BY':
-                        $safetyDays = 90;
+                        $safetyDays = 45;  // середній нерегулярний — рівно 1 LT
                         break;
                     case 'BZ':
-                        $safetyDays = 120;
+                        $safetyDays = 30;  // середній хаотичний — мінімальний буфер
                         break;
                     case 'CX':
+                        $safetyDays = 45;  // дешевий але передбачуваний — варто тримати
+                        break;
                     case 'CY':
-                        $safetyDays = 120;
+                        $safetyDays = 30;  // дешевий нерегулярний
                         break;
                     case 'CZ':
                     default:
-                        $safetyDays = 0;
+                        $safetyDays = 0;   // під замовлення, не морозимо гроші
                         break;
                 }
 
