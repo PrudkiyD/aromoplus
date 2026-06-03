@@ -15,34 +15,32 @@ class MonthlySalesAndCustomersChart extends ChartWidget
 
     protected function getData(): array
     {
-        $now = Carbon::now();
-        $currentYear = $now->year;
-        $currentMonth = $now->month;
         $ordersTable = (new Order())->getTable();
 
-        // 1. Дата найпершого замовлення для кожного клієнта (за весь час)
+        // 1. Отримуємо дату найпершого замовлення для КОЖНОГО клієнта за весь час
         $firstOrdersSub = Order::where('status', '!=', 'canceled')
             ->whereNotNull('customer_id')
             ->select('customer_id', DB::raw('MIN(created_at) as first_order_at'))
             ->groupBy('customer_id');
 
-        // 2. Рахуємо саме УНІКАЛЬНИХ клієнтів (DISTINCT)
-        $analyticsData = Order::where("{$ordersTable}.status", '!=', 'canceled')
-            ->whereYear("{$ordersTable}.created_at", $currentYear)
+        // 2. Отримуємо ВСІ замовлення за весь період, групуючи за Роком та Місяцем
+        $ordersData = Order::where("{$ordersTable}.status", '!=', 'canceled')
             ->leftJoinSub($firstOrdersSub, 'first_orders', function ($join) use ($ordersTable) {
                 $join->on("{$ordersTable}.customer_id", '=', 'first_orders.customer_id');
             })
             ->select(
+                DB::raw("YEAR({$ordersTable}.created_at) as year"),
                 DB::raw("MONTH({$ordersTable}.created_at) as month"),
                 DB::raw("SUM({$ordersTable}.total) as total_sales"),
-                // Рахуємо унікальних клієнтів, чиє перше замовлення було в цьому місяці
+                // Новий клієнт: якщо місяць і рік замовлення збігаються з його найпершим замовленням за весь час
                 DB::raw("COUNT(DISTINCT CASE WHEN MONTH({$ordersTable}.created_at) = MONTH(first_orders.first_order_at) AND YEAR({$ordersTable}.created_at) = YEAR(first_orders.first_order_at) THEN {$ordersTable}.customer_id END) as unique_new_customers"),
-                // Рахуємо унікальних клієнтів, які вже купували в минулих місяцях/роках
+                // Повторний клієнт: якщо він купує в місяці, який не є його найпершим
                 DB::raw("COUNT(DISTINCT CASE WHEN MONTH({$ordersTable}.created_at) != MONTH(first_orders.first_order_at) OR YEAR({$ordersTable}.created_at) != YEAR(first_orders.first_order_at) THEN {$ordersTable}.customer_id END) as unique_returning_customers")
             )
-            ->groupBy('month')
-            ->get()
-            ->keyBy('month');
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get();
 
         $salesData = [];
         $newCustomersData = [];
@@ -51,13 +49,14 @@ class MonthlySalesAndCustomersChart extends ChartWidget
 
         $allMonthsLabels = ['Січ', 'Лют', 'Бер', 'Квіт', 'Трав', 'Черв', 'Лип', 'Серп', 'Верес', 'Жовт', 'Лист', 'Груд'];
 
-        for ($m = 1; $m <= $currentMonth; $m++) {
-            $labels[] = $allMonthsLabels[$m - 1];
-            $monthData = $analyticsData->get($m);
+        // 3. Динамічно наповнюємо масиви на основі отриманих з бази даних періодів
+        foreach ($ordersData as $data) {
+            // Формуємо гарну мітку для осі Х, наприклад: "Черв 2026" або "Січ 2025"
+            $labels[] = $allMonthsLabels[$data->month - 1] . ' ' . $data->year;
 
-            $salesData[] = $monthData ? (float) $monthData->total_sales : 0;
-            $newCustomersData[] = $monthData ? (int) $monthData->unique_new_customers : 0;
-            $returningCustomersData[] = $monthData ? (int) $monthData->unique_returning_customers : 0;
+            $salesData[] = (float) $data->total_sales;
+            $newCustomersData[] = (int) $data->unique_new_customers;
+            $returningCustomersData[] = (int) $data->unique_returning_customers;
         }
 
         return [
@@ -66,21 +65,29 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'label' => 'Продажі (₴)',
                     'data' => $salesData,
                     'borderColor' => '#10B981',
-                    'type' => 'line',
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.05)',
+                    'fill' => true,
+                    'tension' => 0.4,
+                    'borderWidth' => 3,
+                    'pointRadius' => 4,
+                    'pointHoverRadius' => 6,
                     'yAxisID' => 'y',
+                    'type' => 'line',
                 ],
                 [
-                    'label' => 'Нові клієнти',
+                    'label' => 'Нові клієнти (унікальні)',
                     'data' => $newCustomersData,
                     'backgroundColor' => '#3B82F6',
+                    'borderRadius' => 6,
                     'stack' => 'customers',
                     'yAxisID' => 'y1',
                     'type' => 'bar',
                 ],
                 [
-                    'label' => 'Повторні клієнти',
+                    'label' => 'Повторні клієнти (унікальні)',
                     'data' => $returningCustomersData,
                     'backgroundColor' => '#F59E0B',
+                    'borderRadius' => 6,
                     'stack' => 'customers',
                     'yAxisID' => 'y1',
                     'type' => 'bar',
