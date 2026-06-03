@@ -74,7 +74,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'type' => 'line',
                 ],
                 [
-                    'label' => 'Нові клієнти (унікальні)',
+                    'label' => 'Нові клієнти',
                     'data' => $newCustomersData,
                     'backgroundColor' => '#3B82F6',
                     'borderRadius' => 6,
@@ -83,7 +83,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'type' => 'bar',
                 ],
                 [
-                    'label' => 'Повторні клієнти (унікальні)',
+                    'label' => 'Повторні клієнти',
                     'data' => $returningCustomersData,
                     'backgroundColor' => '#F59E0B',
                     'borderRadius' => 6,
