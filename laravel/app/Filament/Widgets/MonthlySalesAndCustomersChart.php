@@ -18,27 +18,27 @@ class MonthlySalesAndCustomersChart extends ChartWidget
         $now = Carbon::now();
         $currentYear = $now->year;
         $currentMonth = $now->month;
+        $ordersTable = (new Order())->getTable();
 
-        // 1. Отримуємо дату найпершого замовлення для КОЖНОГО клієнта за весь час
+        // 1. Дата найпершого замовлення для кожного клієнта (за весь час)
         $firstOrdersSub = Order::where('status', '!=', 'canceled')
             ->whereNotNull('customer_id')
             ->select('customer_id', DB::raw('MIN(created_at) as first_order_at'))
             ->groupBy('customer_id');
 
-        // 2. Витягуємо всі замовлення за поточний рік та за допомогою JOIN 
-        // визначаємо, чи створене замовлення в той самий місяць/рік, коли клієнт зробив першу покупку.
-        $ordersData = Order::where('order_order.status', '!=', 'canceled')
-            ->whereYear('order_order.created_at', $currentYear)
-            ->leftJoinSub($firstOrdersSub, 'first_orders', function ($join) {
-                $join->on('order_order.customer_id', '=', 'first_orders.customer_id');
+        // 2. Рахуємо саме УНІКАЛЬНИХ клієнтів (DISTINCT)
+        $analyticsData = Order::where("{$ordersTable}.status", '!=', 'canceled')
+            ->whereYear("{$ordersTable}.created_at", $currentYear)
+            ->leftJoinSub($firstOrdersSub, 'first_orders', function ($join) use ($ordersTable) {
+                $join->on("{$ordersTable}.customer_id", '=', 'first_orders.customer_id');
             })
             ->select(
-                DB::raw('MONTH(order_order.created_at) as month'),
-                DB::raw('SUM(order_order.total) as total_sales'),
-                // Замовлення вважається замовленням нового клієнта, якщо місяць і рік замовлення збігаються з його найпершим замовленням
-                DB::raw('COUNT(CASE WHEN MONTH(order_order.created_at) = MONTH(first_orders.first_order_at) AND YEAR(order_order.created_at) = YEAR(first_orders.first_order_at) THEN 1 END) as new_customers_orders'),
-                // Усі інші замовлення — це повторні замовлення від старих клієнтів
-                DB::raw('COUNT(CASE WHEN MONTH(order_order.created_at) != MONTH(first_orders.first_order_at) OR YEAR(order_order.created_at) != YEAR(first_orders.first_order_at) OR first_orders.customer_id IS NULL THEN 1 END) as returning_orders')
+                DB::raw("MONTH({$ordersTable}.created_at) as month"),
+                DB::raw("SUM({$ordersTable}.total) as total_sales"),
+                // Рахуємо унікальних клієнтів, чиє перше замовлення було в цьому місяці
+                DB::raw("COUNT(DISTINCT CASE WHEN MONTH({$ordersTable}.created_at) = MONTH(first_orders.first_order_at) AND YEAR({$ordersTable}.created_at) = YEAR(first_orders.first_order_at) THEN {$ordersTable}.customer_id END) as unique_new_customers"),
+                // Рахуємо унікальних клієнтів, які вже купували в минулих місяцях/роках
+                DB::raw("COUNT(DISTINCT CASE WHEN MONTH({$ordersTable}.created_at) != MONTH(first_orders.first_order_at) OR YEAR({$ordersTable}.created_at) != YEAR(first_orders.first_order_at) THEN {$ordersTable}.customer_id END) as unique_returning_customers")
             )
             ->groupBy('month')
             ->get()
@@ -53,12 +53,11 @@ class MonthlySalesAndCustomersChart extends ChartWidget
 
         for ($m = 1; $m <= $currentMonth; $m++) {
             $labels[] = $allMonthsLabels[$m - 1];
-
-            $monthData = $ordersData->get($m);
+            $monthData = $analyticsData->get($m);
 
             $salesData[] = $monthData ? (float) $monthData->total_sales : 0;
-            $newCustomersData[] = $monthData ? (int) $monthData->new_customers_orders : 0;
-            $returningCustomersData[] = $monthData ? (int) $monthData->returning_orders : 0;
+            $newCustomersData[] = $monthData ? (int) $monthData->unique_new_customers : 0;
+            $returningCustomersData[] = $monthData ? (int) $monthData->unique_returning_customers : 0;
         }
 
         return [
@@ -67,29 +66,21 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'label' => 'Продажі (₴)',
                     'data' => $salesData,
                     'borderColor' => '#10B981',
-                    'backgroundColor' => 'rgba(16, 185, 129, 0.05)',
-                    'fill' => true,
-                    'tension' => 0.4,
-                    'borderWidth' => 3,
-                    'pointRadius' => 4,
-                    'pointHoverRadius' => 6,
-                    'yAxisID' => 'y',
                     'type' => 'line',
+                    'yAxisID' => 'y',
                 ],
                 [
-                    'label' => 'Нові клієнти', // фактично: замовлення від нових клієнтів
+                    'label' => 'Нові клієнти',
                     'data' => $newCustomersData,
                     'backgroundColor' => '#3B82F6',
-                    'borderRadius' => 6,
                     'stack' => 'customers',
                     'yAxisID' => 'y1',
                     'type' => 'bar',
                 ],
                 [
-                    'label' => 'Повторні замовлення',
+                    'label' => 'Повторні клієнти',
                     'data' => $returningCustomersData,
                     'backgroundColor' => '#F59E0B',
-                    'borderRadius' => 6,
                     'stack' => 'customers',
                     'yAxisID' => 'y1',
                     'type' => 'bar',
