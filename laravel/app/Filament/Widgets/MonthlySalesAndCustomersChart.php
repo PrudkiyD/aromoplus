@@ -19,26 +19,27 @@ class MonthlySalesAndCustomersChart extends ChartWidget
         $currentYear = $now->year;
         $currentMonth = $now->month;
 
-        $orders = Order::where('status', '!=', 'canceled')
-            ->whereYear('created_at', $currentYear)
-            ->select(
-                DB::raw('MONTH(created_at) as month'),
-                DB::raw('SUM(total) as total_sales'),
-                DB::raw('COUNT(id) as total_orders')
-            )
-            ->groupBy('month')
-            ->get()
-            ->keyBy('month');
-
-        $firstOrders = Order::where('status', '!=', 'canceled')
-            ->select('customer_id', DB::raw('MIN(created_at) as first_order_date'))
+        // 1. Отримуємо дату найпершого замовлення для КОЖНОГО клієнта за весь час
+        $firstOrdersSub = Order::where('status', '!=', 'canceled')
             ->whereNotNull('customer_id')
+            ->select('customer_id', DB::raw('MIN(created_at) as first_order_at'))
             ->groupBy('customer_id');
 
-        $newCustomersByMonth = DB::table(DB::raw("({$firstOrders->toSql()}) as first_orders"))
-            ->mergeBindings($firstOrders->getQuery())
-            ->whereYear('first_order_date', $currentYear)
-            ->select(DB::raw('MONTH(first_order_date) as month'), DB::raw('COUNT(customer_id) as count'))
+        // 2. Витягуємо всі замовлення за поточний рік та за допомогою JOIN 
+        // визначаємо, чи створене замовлення в той самий місяць/рік, коли клієнт зробив першу покупку.
+        $ordersData = Order::where('orders.status', '!=', 'canceled')
+            ->whereYear('orders.created_at', $currentYear)
+            ->leftJoinSub($firstOrdersSub, 'first_orders', function ($join) {
+                $join->on('orders.customer_id', '=', 'first_orders.customer_id');
+            })
+            ->select(
+                DB::raw('MONTH(orders.created_at) as month'),
+                DB::raw('SUM(orders.total) as total_sales'),
+                // Замовлення вважається замовленням нового клієнта, якщо місяць і рік замовлення збігаються з його найпершим замовленням
+                DB::raw('COUNT(CASE WHEN MONTH(orders.created_at) = MONTH(first_orders.first_order_at) AND YEAR(orders.created_at) = YEAR(first_orders.first_order_at) THEN 1 END) as new_customers_orders'),
+                // Усі інші замовлення — це повторні замовлення від старих клієнтів
+                DB::raw('COUNT(CASE WHEN MONTH(orders.created_at) != MONTH(first_orders.first_order_at) OR YEAR(orders.created_at) != YEAR(first_orders.first_order_at) OR first_orders.customer_id IS NULL THEN 1 END) as returning_orders')
+            )
             ->groupBy('month')
             ->get()
             ->keyBy('month');
@@ -46,7 +47,6 @@ class MonthlySalesAndCustomersChart extends ChartWidget
         $salesData = [];
         $newCustomersData = [];
         $returningCustomersData = [];
-        $totalOrdersData = []; //Загальна кількість замовлень
         $labels = [];
 
         $allMonthsLabels = ['Січ', 'Лют', 'Бер', 'Квіт', 'Трав', 'Черв', 'Лип', 'Серп', 'Верес', 'Жовт', 'Лист', 'Груд'];
@@ -54,17 +54,11 @@ class MonthlySalesAndCustomersChart extends ChartWidget
         for ($m = 1; $m <= $currentMonth; $m++) {
             $labels[] = $allMonthsLabels[$m - 1];
 
-            $monthOrder = $orders->get($m);
-            $salesData[] = $monthOrder ? (float) $monthOrder->total_sales : 0;
+            $monthData = $ordersData->get($m);
 
-            $totalOrdersCount = $monthOrder ? (int) $monthOrder->total_orders : 0;
-            $totalOrdersData[] = $totalOrdersCount;
-
-            $newCount = $newCustomersByMonth->get($m)?->count ?? 0;
-            $newCustomersData[] = $newCount;
-
-            $returningCount = max(0, $totalOrdersCount - $newCount);
-            $returningCustomersData[] = $returningCount;
+            $salesData[] = $monthData ? (float) $monthData->total_sales : 0;
+            $newCustomersData[] = $monthData ? (int) $monthData->new_customers_orders : 0;
+            $returningCustomersData[] = $monthData ? (int) $monthData->returning_orders : 0;
         }
 
         return [
@@ -83,7 +77,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'type' => 'line',
                 ],
                 [
-                    'label' => 'Нові клієнти',
+                    'label' => 'Нові клієнти', // фактично: замовлення від нових клієнтів
                     'data' => $newCustomersData,
                     'backgroundColor' => '#3B82F6',
                     'borderRadius' => 6,
