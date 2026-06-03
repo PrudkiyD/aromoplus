@@ -27,18 +27,18 @@ class MonthlySalesAndCustomersChart extends ChartWidget
 
         // 2. Витягуємо всі замовлення за поточний рік та за допомогою JOIN 
         // визначаємо, чи створене замовлення в той самий місяць/рік, коли клієнт зробив першу покупку.
-        $ordersData = Order::where('orders.status', '!=', 'canceled')
-            ->whereYear('orders.created_at', $currentYear)
+        $ordersData = Order::where('order_order.status', '!=', 'canceled')
+            ->whereYear('order_order.created_at', $currentYear)
             ->leftJoinSub($firstOrdersSub, 'first_orders', function ($join) {
-                $join->on('orders.customer_id', '=', 'first_orders.customer_id');
+                $join->on('order_order.customer_id', '=', 'first_orders.customer_id');
             })
             ->select(
-                DB::raw('MONTH(orders.created_at) as month'),
-                DB::raw('SUM(orders.total) as total_sales'),
+                DB::raw('MONTH(order_order.created_at) as month'),
+                DB::raw('SUM(order_order.total) as total_sales'),
                 // Замовлення вважається замовленням нового клієнта, якщо місяць і рік замовлення збігаються з його найпершим замовленням
-                DB::raw('COUNT(CASE WHEN MONTH(orders.created_at) = MONTH(first_orders.first_order_at) AND YEAR(orders.created_at) = YEAR(first_orders.first_order_at) THEN 1 END) as new_customers_orders'),
+                DB::raw('COUNT(CASE WHEN MONTH(order_order.created_at) = MONTH(first_orders.first_order_at) AND YEAR(order_order.created_at) = YEAR(first_orders.first_order_at) THEN 1 END) as new_customers_orders'),
                 // Усі інші замовлення — це повторні замовлення від старих клієнтів
-                DB::raw('COUNT(CASE WHEN MONTH(orders.created_at) != MONTH(first_orders.first_order_at) OR YEAR(orders.created_at) != YEAR(first_orders.first_order_at) OR first_orders.customer_id IS NULL THEN 1 END) as returning_orders')
+                DB::raw('COUNT(CASE WHEN MONTH(order_order.created_at) != MONTH(first_orders.first_order_at) OR YEAR(order_order.created_at) != YEAR(first_orders.first_order_at) OR first_orders.customer_id IS NULL THEN 1 END) as returning_orders')
             )
             ->groupBy('month')
             ->get()
