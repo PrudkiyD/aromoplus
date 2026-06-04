@@ -16,29 +16,7 @@ class EditOrder extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            /*
-            Action::make('sendQuote')
-            ->label('Створити ттн')
-            ->icon('heroicon-o-paper-airplane')
-            ->color('success')
-            ->form([
-                TextInput::make('email')
-                    ->label('Email')
-                    ->email()
-                    ->required(),
-                TextInput::make('price')
-                    ->label('Ціна')
-                    ->numeric()
-                    ->required(),
-                Select::make('currency')
-                    ->options(['UAH' => 'UAH', 'USD' => 'USD']),
-            ])
-            ->action(function (array $data): void {
-                \Mail::to($data['email'])->send(...);
-            })
-            ->modalHeading('Створити ттн')
-            ->modalSubmitActionLabel('Створити ттн'),
-            */
+
             Actions\DeleteAction::make(),
         ];
     }
