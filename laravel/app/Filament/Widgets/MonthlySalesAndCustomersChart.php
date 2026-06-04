@@ -64,7 +64,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                 [
                     'label' => 'Продажі (₴)',
                     'data' => $salesData,
-                    'borderColor' => '#43977b',
+                    'borderColor' => '#89ffd8',
                     'backgroundColor' => 'rgba(16, 185, 129, 0.05)',
                     'fill' => true,
                     'tension' => 0.4,
@@ -87,7 +87,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                 [
                     'label' => 'Повторні клієнти',
                     'data' => $returningCustomersData,
-                    'backgroundColor' => '#c5a46c',
+                    'backgroundColor' => '#ffd998',
                     'borderRadius' => 0,
                     'borderWidth' => 0,
                     'stack' => 'customers',
