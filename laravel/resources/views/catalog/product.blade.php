@@ -153,5 +153,14 @@ product
     <h4>Опис</h4>
     {!! $product->description !!}
 </section>
+@if($recentProducts->isNotEmpty())
+    <section>
+    
+        @foreach($recentProducts as $product)
+            <p>{{ $product->name }}</p>
+        @endforeach
+
+    </section>
+@endif
 <script src="/storage/js/product.js"></script>
 @endsection
