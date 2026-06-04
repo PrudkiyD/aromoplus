@@ -64,7 +64,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                 [
                     'label' => 'Продажі (₴)',
                     'data' => $salesData,
-                    'borderColor' => '#89ffd8',
+                    'borderColor' => '#d5a572',
                     'backgroundColor' => 'rgba(16, 185, 129, 0.05)',
                     'fill' => true,
                     'tension' => 0.4,
@@ -78,8 +78,11 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'label' => 'Нові клієнти',
                     'data' => $newCustomersData,
                     'backgroundColor' => '#417aa6',
-                    'borderRadius' => 0,
-                    'borderWidth' => 0,
+                    'borderRadius' => 0,        // прямі кути
+                    'borderWidth' => 0,         // без обводки
+                    'borderSkipped' => false,   // застосовує borderRadius до всіх сторін
+                    'barPercentage' => 0.9,     // ширина бару відносно категорії (0.0 - 1.0)
+                    'categoryPercentage' => 0.8, // ширина категорії відносно доступного простору
                     'stack' => 'customers',
                     'yAxisID' => 'y1',
                     'type' => 'bar',
@@ -88,8 +91,11 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'label' => 'Повторні клієнти',
                     'data' => $returningCustomersData,
                     'backgroundColor' => '#ffd998',
-                    'borderRadius' => 0,
-                    'borderWidth' => 0,
+                    'borderRadius' => 0,        // прямі кути
+                    'borderWidth' => 0,         // без обводки
+                    'borderSkipped' => false,   // застосовує borderRadius до всіх сторін
+                    'barPercentage' => 0.9,     // ширина бару відносно категорії (0.0 - 1.0)
+                    'categoryPercentage' => 0.8, // ширина категорії відносно доступного простору
                     'stack' => 'customers',
                     'yAxisID' => 'y1',
                     'type' => 'bar',
