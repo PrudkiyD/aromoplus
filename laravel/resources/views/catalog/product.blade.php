@@ -155,7 +155,7 @@ product
 </section>
 @if($recentProducts->isNotEmpty())
     <section>
-    
+        <h4>Переглянуті товари</h4>
         @foreach($recentProducts as $product)
             <p>{{ $product->name }}</p>
         @endforeach
