@@ -157,7 +157,7 @@ product
     <section>
         <h4>Переглянуті товари</h4>
         @foreach($recentProducts as $product)
-            <p>{{ $product->name }}</p>
+            @include('catalog.render_product')
         @endforeach
 
     </section>
