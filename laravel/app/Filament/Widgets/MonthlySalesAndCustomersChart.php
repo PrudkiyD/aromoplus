@@ -64,18 +64,43 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                 [
                     'label' => 'Продажі (₴)',
                     'data' => $salesData,
-
-                ],
-                [
-                    'label' => 'Нові клієнти',
-                    'data' => $newCustomersData,
-
+                    'borderColor' => '#f2b423',
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.05)',
+                    'fill' => true,
+                    'tension' => 0.4,
+                    'borderWidth' => 2,
+                    'pointRadius' => 4,
+                    'pointHoverRadius' => 6,
+                    'yAxisID' => 'y',
+                    'type' => 'line',
                 ],
                 [
                     'label' => 'Повторні клієнти',
                     'data' => $returningCustomersData,
-
+                    'backgroundColor' => '#417aa6',
+                    'borderRadius' => 0,        // прямі кути
+                    'borderWidth' => 0,         // без обводки
+                    'borderSkipped' => false,   // застосовує borderRadius до всіх сторін
+                    'barPercentage' => 0.9,     // ширина бару відносно категорії (0.0 - 1.0)
+                    'categoryPercentage' => 0.8, // ширина категорії відносно доступного простору
+                    'stack' => 'customers',
+                    'yAxisID' => 'y1',
+                    'type' => 'bar',
                 ],
+                [
+                    'label' => 'Нові клієнти',
+                    'data' => $newCustomersData,
+                    'backgroundColor' => '#ffd998',
+                    'borderRadius' => 0,        // прямі кути
+                    'borderWidth' => 0,         // без обводки
+                    'borderSkipped' => false,   // застосовує borderRadius до всіх сторін
+                    'barPercentage' => 0.9,     // ширина бару відносно категорії (0.0 - 1.0)
+                    'categoryPercentage' => 0.8, // ширина категорії відносно доступного простору
+                    'stack' => 'customers',
+                    'yAxisID' => 'y1',
+                    'type' => 'bar',
+                ],
+                
             ],
             'labels' => $labels,
         ];
