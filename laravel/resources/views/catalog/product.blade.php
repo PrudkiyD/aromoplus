@@ -153,6 +153,8 @@ product
     <h4>Опис</h4>
     {!! $product->description !!}
 </section>
+<br>
+<br>
 @if($recentProducts->isNotEmpty())
     <section>
         <h4>Переглянуті товари</h4>
