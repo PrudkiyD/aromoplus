@@ -79,6 +79,14 @@ class CatalogController extends Controller
         // Отримуємо ID прайс-листа
         $price_list_id = $request->cookie('user_price', 1);
 
+        $ip = request()->ip();
+
+        $recentProducts = Product::whereHas('views', fn($q) => $q->where('ip_address', $ip))
+            ->withMax(['views' => fn($q) => $q->where('ip_address', $ip)], 'created_at')
+            ->orderByDesc('views_max_created_at')
+            ->take(4)
+            ->get();
+
         // Створюємо унікальний ключ для сесії, наприклад: 'viewed_products.5'
         $sessionKey = 'viewed_products.' . $product->id;
 
@@ -102,6 +110,7 @@ class CatalogController extends Controller
             'title',
             'title_page',
             'product',
+            'recentProducts'
         ));
     }
 
