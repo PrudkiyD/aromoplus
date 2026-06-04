@@ -1061,6 +1061,14 @@ footer ul{
   .loader:after {
     left: 3.5em;
   }
+
+
+  .view-product{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
   
   @keyframes bblFadInOut {
     0%, 80%, 100% { box-shadow: 0 2.5em 0 -1.3em }
