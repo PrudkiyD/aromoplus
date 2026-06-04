@@ -156,7 +156,7 @@ product
 @if($recentProducts->isNotEmpty())
     <section>
         <h4>Переглянуті товари</h4>
-        <div class="view-product">
+        <div class="list-products">
             @foreach($recentProducts as $product)
                 @include('catalog.render_product')
             @endforeach
