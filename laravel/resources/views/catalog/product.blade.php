@@ -156,10 +156,11 @@ product
 @if($recentProducts->isNotEmpty())
     <section>
         <h4>Переглянуті товари</h4>
-        @foreach($recentProducts as $product)
-            @include('catalog.render_product')
-        @endforeach
-
+        <div class="view-product">
+            @foreach($recentProducts as $product)
+                @include('catalog.render_product')
+            @endforeach
+        </div>
     </section>
 @endif
 <script src="/storage/js/product.js"></script>

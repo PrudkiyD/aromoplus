@@ -300,7 +300,6 @@ main {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: ;
 }
 
 .sale-label img{
@@ -489,8 +488,6 @@ main {
 
 /*----------------------------------------------------------------*/
 
-.about-us {
-}
 
 .about-us h2 {
     font-size: 1.5em;
