@@ -64,7 +64,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                 [
                     'label' => 'Продажі (₴)',
                     'data' => $salesData,
-                    'borderColor' => '#dfab74',
+                    'borderColor' => '#417aa6',
                     'backgroundColor' => 'rgba(16, 185, 129, 0.05)',
                     'fill' => true,
                     'tension' => 0.4,
@@ -77,7 +77,7 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                 [
                     'label' => 'Нові клієнти',
                     'data' => $newCustomersData,
-                    'backgroundColor' => '#417aa6',
+                    'backgroundColor' => '#dfab74',
                     'borderRadius' => 0,        // прямі кути
                     'borderWidth' => 0,         // без обводки
                     'borderSkipped' => false,   // застосовує borderRadius до всіх сторін
