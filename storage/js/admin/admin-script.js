@@ -1,5 +1,6 @@
-const currentUrl = window.location.href
-const pattern = /^https:\/\/aromoplus\.com\.ua\/admin\/order\/orders\/\d+\/edit$/
+const currentUrl = window.location.pathname
+const pattern = /^\/admin\/order\/orders\/\d+\/edit$/
+console.log(currentUrl)
 const domen = 'https://aromoplus.com.ua'
 
 
