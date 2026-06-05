@@ -17,6 +17,7 @@ use Filament\Http\Middleware\Authenticate;
 #Головна
 Route::get('/', [IndexController::class, 'index']);
 Route::get('sitemap.xml', [IndexController::class, 'sitemap']);
+Route::get('/test', [IndexController::class, 'test']);
 
 
 #Редірект

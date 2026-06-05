@@ -15,6 +15,11 @@ use Illuminate\Support\Facades\URL;
 
 class IndexController extends Controller
 {
+    public function test(Request $request){
+        return response()->json([
+                'status' => 'ok',
+            ]);
+    }
     public function index(Request $request)
     {
         $page = Page::where('slug', 'home')->get();

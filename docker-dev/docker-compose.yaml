@@ -1,0 +1,37 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker-dev/Dockerfile
+    ports:
+      - "8000:80"
+    volumes: 
+      - ../:/var/www/html
+      - vendor_data:/var/www/html/laravel/vendor
+      - cache_data:/var/www/html/laravel/bootstrap/cache
+    depends_on:
+      - db
+    command: >
+      bash -c "mkdir -p /var/www/html/laravel/bootstrap/cache
+      && chown -R www-data:www-data /var/www/html/laravel/bootstrap/cache
+      && chmod -R 775 /var/www/html/laravel/bootstrap/cache
+      && apache2-foreground"
+      
+  db:
+    image: mysql:5.7.34
+    container_name: mysql57
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: aromodb
+      MYSQL_USER: aromodb
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/data_db:/var/lib/mysql
+      - ./mysql/aromodb.sql:/docker-entrypoint-initdb.d/aromodb.sql:ro
+
+volumes:
+  vendor_data:
+  cache_data:

@@ -50,3 +50,6 @@ Thumbs.db
 
 #static
 /laravel/webstat/
+
+#DB
+/docker-dev/mysql/
