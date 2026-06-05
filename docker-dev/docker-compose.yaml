@@ -15,6 +15,7 @@ services:
       bash -c "mkdir -p /var/www/html/laravel/bootstrap/cache
       && chown -R www-data:www-data /var/www/html/laravel/bootstrap/cache
       && chmod -R 775 /var/www/html/laravel/bootstrap/cache
+      && cd /var/www/html/laravel && composer install --no-interaction
       && apache2-foreground"
       
   db:
