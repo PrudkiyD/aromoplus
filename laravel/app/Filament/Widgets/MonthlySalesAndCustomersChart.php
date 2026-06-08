@@ -64,13 +64,13 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                 [
                     'label' => 'Продажі (₴)',
                     'data' => $salesData,
-                    'borderColor' => '#ffd676',
+                    'borderColor' => '#865e00',
                     'backgroundColor' => 'rgba(185, 131, 16, 0.07)',
                     'fill' => true,
                     'tension' => 0.4,
                     'borderWidth' => 2,
-                    'pointRadius' => 4,
-                    'pointHoverRadius' => 6,
+                    'pointRadius' => 0,
+                    'pointHoverRadius' => 0,
                     'yAxisID' => 'y',
                     'type' => 'line',
                 ],
@@ -78,11 +78,11 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'label' => 'Повторні клієнти',
                     'data' => $returningCustomersData,
                     'backgroundColor' => '#417aa6',
-                    'borderRadius' => 0,        // прямі кути
-                    'borderWidth' => 0,         // без обводки
-                    'borderSkipped' => false,   // застосовує borderRadius до всіх сторін
-                    'barPercentage' => 0.9,     // ширина бару відносно категорії (0.0 - 1.0)
-                    'categoryPercentage' => 0.8, // ширина категорії відносно доступного простору
+                    'borderRadius' => 0,
+                    'borderWidth' => 0,         
+                    'borderSkipped' => false,   
+                    'barPercentage' => 0.9,    
+                    'categoryPercentage' => 0.8, 
                     'stack' => 'customers',
                     'yAxisID' => 'y1',
                     'type' => 'bar',
@@ -91,11 +91,11 @@ class MonthlySalesAndCustomersChart extends ChartWidget
                     'label' => 'Нові клієнти',
                     'data' => $newCustomersData,
                     'backgroundColor' => '#ffd998',
-                    'borderRadius' => 0,        // прямі кути
-                    'borderWidth' => 0,         // без обводки
-                    'borderSkipped' => false,   // застосовує borderRadius до всіх сторін
-                    'barPercentage' => 0.9,     // ширина бару відносно категорії (0.0 - 1.0)
-                    'categoryPercentage' => 0.8, // ширина категорії відносно доступного простору
+                    'borderRadius' => 0,
+                    'borderWidth' => 0, 
+                    'borderSkipped' => false,
+                    'barPercentage' => 0.9,
+                    'categoryPercentage' => 0.8,
                     'stack' => 'customers',
                     'yAxisID' => 'y1',
                     'type' => 'bar',
