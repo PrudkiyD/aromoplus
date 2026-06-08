@@ -12,8 +12,6 @@
 
     {{-- Canonical щоб не плодити дублі --}}
     <link rel="canonical" href="{{ url('/') }}">
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
 
