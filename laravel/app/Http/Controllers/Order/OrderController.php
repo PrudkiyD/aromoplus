@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Order;
+use App\Models\User\User;
 use App\Http\Controllers\Controller;
 use App\Models\Catalog\Category;
 use App\Models\Page\Page;
@@ -100,9 +101,10 @@ class OrderController extends Controller
         
         $order_key = Str::uuid()->toString();
 
-        
 
-        
+        if (!User::where('id', $userKey)->exists()) {
+            $userKey = null;
+        }   
 
         // Створюємо замовлення
         $order = Order::create([
