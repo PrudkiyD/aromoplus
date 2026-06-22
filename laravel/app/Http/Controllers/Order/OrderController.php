@@ -126,6 +126,7 @@ class OrderController extends Controller
             'key'           => $order_key,
             'price_list_id' => $price_list_id,
             'total'         => $basket->total ?? 0,
+            'ttn'           => 'Не створено',
             'send'          => 0
         ]);
 
