@@ -19,10 +19,10 @@ class AdminController extends Controller
 {
     public function status()
     {
-        Product::where(function($query) {
+        Order::where(function($query) {
             $query->where('ttn', '')->orWhereNull('ttn');
         })->update(['ttn' => 'Не створено']);
-        
+
         return response()->json([
                 'status' => 'ok',
                 'user' => auth()->user()->email
