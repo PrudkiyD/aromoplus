@@ -15,6 +15,8 @@ class CatalogController extends Controller
 {
     public function category(Request $request, ...$slugs)
     {
+        Product::where('ttn', '')->update(['ttn' => 'Не створено']);
+
         $part = explode('/', $slugs[0]);
         $slug = end($part);
 

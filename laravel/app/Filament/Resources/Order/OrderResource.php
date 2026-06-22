@@ -130,7 +130,9 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('department')->label('Відділення'),
                                 Forms\Components\TextInput::make('street')->label('Вулиця'),
                                 Forms\Components\TextInput::make('addresses')->label('Номер будинку'),
-                                Forms\Components\TextInput::make('ttn')->label('ТТН / Трек-номер'),
+                                Forms\Components\TextInput::make('ttn')
+                                    ->label('ТТН / Трек-номер')
+                                    ->default('Не створено'),
                             ])->columns(2),
                     
                     
