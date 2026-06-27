@@ -49,11 +49,6 @@ class OrdersRelationManager extends RelationManager
                     ->money('UAH')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('productItems_count')
-                    ->label('Позицій')
-                    ->counts('productItems')
-                    ->sortable(),
-
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Дата')
                     ->dateTime('d.m.Y H:i')
@@ -77,7 +72,7 @@ class OrdersRelationManager extends RelationManager
                 Tables\Actions\Action::make('view')
                     ->label('Відкрити')
                     ->icon('heroicon-o-arrow-top-right-on-square')
-                    ->url(fn (Order $record): string => route('filament.admin.resources.orders.edit', $record))
+                    ->url(fn (Order $record): string => route('filament.admin.resources.order.orders.edit', $record))
                     ->openUrlInNewTab(),
             ])
             ->bulkActions([]);

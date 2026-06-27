@@ -59,4 +59,9 @@ class Product extends Model
     {
         return $this->hasMany(View::class, 'product_id', 'id');
     }
+
+    public function productItems()
+    {
+        return $this->hasMany(\App\Models\Order\ProductItem::class, 'product_id');
+    }
 }
