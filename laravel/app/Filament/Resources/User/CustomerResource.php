@@ -94,7 +94,7 @@ class CustomerResource extends Resource
             ]);
     }
 
-    public static function getRelationManagers(): array
+    public static function getRelations(): array
     {
         return [
             OrdersRelationManager::class,
