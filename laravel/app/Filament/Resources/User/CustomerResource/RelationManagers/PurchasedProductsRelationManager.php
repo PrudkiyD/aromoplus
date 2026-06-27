@@ -46,10 +46,9 @@ class PurchasedProductsRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\ImageColumn::make('main_image')
-                    ->label('')
-                    ->width(48)
-                    ->height(48)
-                    ->defaultImageUrl(fn () => null),
+                    ->label('Фото')
+                    ->size(75)
+                    ->getStateUsing(fn ($record) => asset('/storage/' . $record->main_image)),  
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Назва товару')
