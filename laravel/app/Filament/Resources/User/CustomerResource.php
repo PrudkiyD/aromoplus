@@ -51,6 +51,16 @@ class CustomerResource extends Resource
                             ->label('Примітки')
                             ->columnSpanFull()
                             ->rows(3),
+                            
+                        Forms\Components\Placeholder::make('orders_count')
+                            ->label('Кількість замовлень')
+                            ->content(fn (Customer $record): string => $record->orders()->count() . ' шт.')
+                            ->visibleOn('edit'),
+
+                        Forms\Components\Placeholder::make('orders_sum')
+                            ->label('Загальна сума')
+                            ->content(fn (Customer $record): string => '₴ ' . number_format($record->orders()->sum('total'), 2, '.', ' '))
+                            ->visibleOn('edit'),
 
                         Forms\Components\Hidden::make('user_id')
                             ->default(auth()->id()),
@@ -79,6 +89,18 @@ class CustomerResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Останнє оновлення')
                     ->dateTime('d.m.Y H:i')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('orders_count')
+                    ->label('Замовлень')
+                    ->counts('orders')
+                    ->sortable()
+                    ->alignCenter(),
+
+                Tables\Columns\TextColumn::make('orders_sum_total')
+                    ->label('Загальна сума')
+                    ->money('UAH')
+                    ->sum('orders', 'total')
                     ->sortable(),
             ])
             ->defaultSort('updated_at', 'desc')
