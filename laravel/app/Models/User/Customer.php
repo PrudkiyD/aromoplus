@@ -21,4 +21,10 @@ class Customer extends Model
         'updated_at',
         'user_id'
     ];
+    
+    public function orders()
+    {
+        return $this->hasMany(\App\Models\Order\Order::class, 'customer_id');
+    }
 }
+
