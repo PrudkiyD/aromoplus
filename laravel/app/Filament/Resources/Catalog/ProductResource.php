@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Catalog;
 use App\Filament\Resources\Catalog\ProductResource\RelationManagers\OrdersRelationManager;
 use App\Filament\Resources\Catalog\ProductResource\RelationManagers\DiscountsRelationManager;
 use App\Filament\Resources\Catalog\ProductResource\RelationManagers\CustomersRelationManager;
+use App\Filament\Resources\Catalog\ProductResource\RelationManagers\ImagesRelationManager;
 use App\Filament\Resources\Catalog\ProductResource\Pages;
 use App\Models\Catalog\Product;
 use Filament\Forms;
