@@ -19,7 +19,7 @@ class AdminController extends Controller
 {
 
     const STORAGE_BASE = '/var/www/aromoplus1/data/www/aromoplus.com.ua/storage/';
-    
+
     public function status()
     {
         return response()->json([
@@ -58,6 +58,7 @@ class AdminController extends Controller
 
         // Оновлюємо модель якщо є model_id
         if ($modelId) {
+            $modelName = str_replace('/', '\\', $modelName);
             $modelClass = 'App\\Models\\' . $modelName;
 
             if (!class_exists($modelClass)) {
