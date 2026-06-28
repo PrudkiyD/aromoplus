@@ -10,7 +10,7 @@ class Page extends Model
     use HasFactory;
 
     protected $table = 'page_page';
-
+    public $timestamps = false;
     protected $fillable = [
         'is_published',
         'type',

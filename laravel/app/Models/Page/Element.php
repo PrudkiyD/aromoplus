@@ -10,7 +10,7 @@ class Element extends Model
     use HasFactory;
 
     protected $table = 'page_element';
-
+    public $timestamps = false;
     protected $fillable = [
         'name',
         'content',

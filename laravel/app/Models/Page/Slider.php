@@ -10,7 +10,7 @@ class Slider extends Model
     use HasFactory;
 
     protected $table = 'page_slider';
-
+    public $timestamps = false;
     protected $fillable = [
         'name',
         'image',
