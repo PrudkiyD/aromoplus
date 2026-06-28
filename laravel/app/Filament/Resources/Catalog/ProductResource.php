@@ -359,6 +359,7 @@ class ProductResource extends Resource
     {
         return [
             DiscountsRelationManager::class,
+            ImagesRelationManager::class,
             OrdersRelationManager::class,
             CustomersRelationManager::class,
         ];
