@@ -101,7 +101,9 @@ class DiscountsRelationManager extends RelationManager
                     })
                     ->description(fn($record) => $record->vat_included ? 'з ПДВ (x1.2)' : 'без ПДВ')
                     ->color('primary')
-                    ->weight('bold'),
+                    ->weight('bold')->copyable()
+                    ->copyMessage('Скопійовано')
+                    ->copyMessageDuration(1500),
 
             ])
             ->defaultSort('quantity', 'asc') // Сортуємо за кількістю за замовчуванням
