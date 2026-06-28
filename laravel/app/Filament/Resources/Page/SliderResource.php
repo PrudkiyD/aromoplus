@@ -62,7 +62,7 @@ class SliderResource extends Resource
                 Tables\Columns\ImageColumn::make('main_image')
                     ->label('Фото')
                     ->size(75)
-                    ->getStateUsing(fn ($record) => asset('/storage/' . $record->main_image)),
+                    ->getStateUsing(fn ($record) => asset('/storage/' . $record->image)),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Назва')
