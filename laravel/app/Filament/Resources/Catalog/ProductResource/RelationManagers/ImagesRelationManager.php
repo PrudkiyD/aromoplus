@@ -47,7 +47,8 @@ class ImagesRelationManager extends RelationManager
                             data-par-id='{$this->ownerRecord->id}' 
                             data-par-col='product_id'>
                         ")),
-            ]);
+            ])
+            ->footerActions([]);
     }
 
     public function table(Table $table): Table
