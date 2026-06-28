@@ -33,7 +33,6 @@ class SliderResource extends Resource
 
                 Forms\Components\TextInput::make('url')
                     ->label('URL посилання')
-                    ->url()
                     ->maxLength(255),
             ])->columns(2),
 
