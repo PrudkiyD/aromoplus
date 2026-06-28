@@ -48,16 +48,6 @@ class CustomersRelationManager extends RelationManager
                     ->searchable()
                     ->copyable()
                     ->copyMessage('Скопійовано'),
-
-                Tables\Columns\TextColumn::make('orders_count')
-                    ->label('Замовлень')
-                    ->sortable()
-                    ->alignCenter(),
-
-                Tables\Columns\TextColumn::make('total_spent')
-                    ->label('Витрачено')
-                    ->money('UAH')
-                    ->sortable(),
             ])
             ->defaultSort('orders_count', 'desc')
             ->headerActions([])
