@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Http;
 
 class AdminController extends Controller
 {
+
+    const STORAGE_BASE = '/var/www/aromoplus1/data/www/aromoplus.com.ua/storage/';
+    
     public function status()
     {
         return response()->json([
