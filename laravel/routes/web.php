@@ -73,4 +73,5 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::get('/admin/print-blanck/{blanck_id}/{pay_id}/', [AdminController::class, 'printBlanck']);
         Route::get('/admin/nova-poshta/create', [novaPoshtaController::class, 'novaPoshta']);
         Route::get('/admin/supplier-order', [SupplierOrderController::class, 'supplierOrder']);
+        Route::get('/admin/img-import', [AdminController::class, 'imgImport']);
 });

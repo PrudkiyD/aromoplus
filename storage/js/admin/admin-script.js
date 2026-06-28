@@ -367,3 +367,42 @@ window.addEventListener('click', function(el){
     addProduct(el) 
 })
 
+document.querySelectorAll('input[type="file"][data-path]').forEach(input => {
+    input.addEventListener('change', async function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('path', this.dataset.path);
+        formData.append('model', this.dataset.model);
+        formData.append('col', this.dataset.col);
+        formData.append('model_id', this.dataset.modelId ?? ''); // якщо є
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+        try {
+            const response = await fetch('/admin/img-import', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error('Помилка:', data.message);
+                alert('Помилка: ' + data.message);
+                return;
+            }
+
+            console.log('Збережено:', data.path);
+            document.querySelector('#preview').src = '/storage/' + data.path;
+        } catch (e) {
+            console.error('Fetch error:', e);
+        }
+    });
+});

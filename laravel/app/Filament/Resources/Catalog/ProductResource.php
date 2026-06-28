@@ -160,7 +160,9 @@ class ProductResource extends Resource
                                 Forms\Components\Placeholder::make('current_image')
                                     ->label('Поточне фото')
                                     ->content(fn ($record) => $record && $record->main_image 
-                                        ? new \Illuminate\Support\HtmlString("<img src='/storage/{$record->main_image}' style='max-height: 200px; border-radius: 8px;'><a href='/catalog/product/{$record->id}'>Переглянути сторінку товара</a>")
+                                        ? new \Illuminate\Support\HtmlString("<img src='/storage/{$record->main_image}' id='preview' style='max-height: 200px; border-radius: 8px;'>
+                                                                                    <a href='/catalog/product/{$record->id}'>Переглянути сторінку товара</a>
+                                                                                    <input type='file' name='import-main-img' data-model-id='{$record->id}' data-path='product-images' data-model='Product' data-col='main_image'>")
                                         : 'Фото відсутнє'),
                             ]),
                             

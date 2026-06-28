@@ -19,15 +19,72 @@ class AdminController extends Controller
 {
     public function status()
     {
-        Order::where(function($query) {
-            $query->where('ttn', '')->orWhereNull('ttn');
-        })->update(['ttn' => 'Не створено']);
-
         return response()->json([
                 'status' => 'ok',
                 'user' => auth()->user()->email
             ]);
     }
+
+    public function imgImport(Request $request){
+        $request->validate([
+            'file'     => 'required|image|max:5120',
+            'path'     => 'required|string',
+            'model'    => 'required|string',
+            'col'      => 'required|string',
+            'model_id' => 'nullable|integer',
+        ]);
+
+        $dataPath  = trim($request->input('path'), '/');  // напр. "product-images"
+        $modelName = $request->input('model');             // напр. "Product"
+        $col       = $request->input('col');               // напр. "main_image"
+        $modelId   = $request->input('model_id');
+
+        // Зберігаємо файл
+        $file     = $request->file('file');
+        $filename = $file->hashName(); // унікальне ім'я типу "abc123.jpg"
+        $destDir  = self::STORAGE_BASE . $dataPath;
+
+        if (!is_dir($destDir)) {
+            mkdir($destDir, 0755, true);
+        }
+
+        $file->move($destDir, $filename);
+
+        // Шлях для запису в БД: "product-images/abc123.jpg"
+        $dbPath = $dataPath . '/' . $filename;
+
+        // Оновлюємо модель якщо є model_id
+        if ($modelId) {
+            $modelClass = 'App\\Models\\' . $modelName;
+
+            if (!class_exists($modelClass)) {
+                return response()->json(['message' => "Модель {$modelName} не знайдена"], 422);
+            }
+
+            $instance = $modelClass::find($modelId);
+
+            if (!$instance) {
+                return response()->json(['message' => "Запис #{$modelId} не знайдений"], 404);
+            }
+
+            // Видаляємо старе зображення якщо є
+            if (!empty($instance->$col)) {
+                $oldFile = self::STORAGE_BASE . $instance->$col;
+                if (file_exists($oldFile)) {
+                    unlink($oldFile);
+                }
+            }
+
+            $instance->$col = $dbPath;
+            $instance->save();
+        }
+
+        return response()->json([
+            'path'    => $dbPath,
+            'message' => 'Збережено успішно',
+        ]);
+    }
+    
 
     public function updateTotal(Request $request, $order_id, $total){
         $order = Order::firstOrCreate(
