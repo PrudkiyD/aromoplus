@@ -35,7 +35,7 @@ class ImagesRelationManager extends RelationManager
                                                                         data-par-id='{$record->product_id}' 
                                                                         data-par-col='product_id'>
                                                             ")
-                        : "<img src='/storage/' id='previewnew' style='max-height: 200px; border-radius: 8px;'>
+                        : HtmlString("<img src='/storage/' id='previewnew' style='max-height: 200px; border-radius: 8px;'>
                             <input type='file' 
                             name='import-main-img' 
                             data-preview='previewnew' 
@@ -45,7 +45,7 @@ class ImagesRelationManager extends RelationManager
                             data-col='image' 
                             data-par-id='{$this->ownerRecord->id}' 
                             data-par-col='product_id'>
-                        "),
+                        ")),
             ]);
     }
 
