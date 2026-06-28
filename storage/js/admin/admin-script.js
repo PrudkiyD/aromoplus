@@ -381,6 +381,8 @@ document.querySelectorAll('input[type="file"][data-path]').forEach(input => {
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
+        console.log(csrfToken)
+
         try {
             const response = await fetch('/admin/img-import', {
                 method: 'POST',
