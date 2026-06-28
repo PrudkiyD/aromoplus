@@ -401,7 +401,7 @@ document.querySelectorAll('input[type="file"][data-path]').forEach(input => {
                 return;
             }
 
-            console.log('Збережено:', data.path);
+            alert('Зображення збережено:', data.path);
             document.querySelector('#preview').src = '/storage/' + data.path;
         } catch (e) {
             console.error('Fetch error:', e);
