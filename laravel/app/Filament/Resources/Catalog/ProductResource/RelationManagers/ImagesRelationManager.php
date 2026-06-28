@@ -35,7 +35,8 @@ class ImagesRelationManager extends RelationManager
                                                                         data-par-id='{$record->product_id}' 
                                                                         data-par-col='product_id'>
                                                             ")
-                        : HtmlString("<img src='/storage/' id='previewnew' style='max-height: 200px; border-radius: 8px;'>
+                        : new \Illuminate\Support\HtmlString("
+                            <img src='/storage/' id='previewnew' style='max-height: 200px; border-radius: 8px;'>
                             <input type='file' 
                             name='import-main-img' 
                             data-preview='previewnew' 
