@@ -28,23 +28,33 @@ class AdminController extends Controller
             ]);
     }
 
-    public function imgImport(Request $request){
+    public function imgImport(Request $request)
+    {
         $request->validate([
             'file'     => 'required|image|max:5120',
             'path'     => 'required|string',
             'model'    => 'required|string',
             'col'      => 'required|string',
             'model_id' => 'nullable|integer',
+            'par_id'   => 'nullable|integer',
+            'par_col'  => 'nullable|string',
         ]);
 
-        $dataPath  = trim($request->input('path'), '/');  // напр. "product-images"
-        $modelName = $request->input('model');             // напр. "Product"
-        $col       = $request->input('col');               // напр. "main_image"
-        $modelId   = $request->input('model_id');
+        $dataPath   = trim($request->input('path'), '/');
+        $modelName  = str_replace('/', '\\', $request->input('model'));
+        $col        = $request->input('col');
+        $modelId    = $request->input('model_id');
+        $parId      = $request->input('par_id');
+        $parCol     = $request->input('par_col');
+        $modelClass = 'App\\Models\\' . $modelName;
+
+        if (!class_exists($modelClass)) {
+            return response()->json(['message' => "Модель {$modelName} не знайдена"], 422);
+        }
 
         // Зберігаємо файл
         $file     = $request->file('file');
-        $filename = $file->hashName(); // унікальне ім'я типу "abc123.jpg"
+        $filename = $file->hashName();
         $destDir  = self::STORAGE_BASE . $dataPath;
 
         if (!is_dir($destDir)) {
@@ -53,25 +63,17 @@ class AdminController extends Controller
 
         $file->move($destDir, $filename);
 
-        // Шлях для запису в БД: "product-images/abc123.jpg"
         $dbPath = $dataPath . '/' . $filename;
 
-        // Оновлюємо модель якщо є model_id
         if ($modelId) {
-            $modelName = str_replace('/', '\\', $modelName);
-            $modelClass = 'App\\Models\\' . $modelName;
-
-            if (!class_exists($modelClass)) {
-                return response()->json(['message' => "Модель {$modelName} не знайдена"], 422);
-            }
-
+            // Оновлюємо існуючий запис
             $instance = $modelClass::find($modelId);
 
             if (!$instance) {
                 return response()->json(['message' => "Запис #{$modelId} не знайдений"], 404);
             }
 
-            // Видаляємо старе зображення якщо є
+            // Видаляємо старе зображення
             if (!empty($instance->$col)) {
                 $oldFile = self::STORAGE_BASE . $instance->$col;
                 if (file_exists($oldFile)) {
@@ -81,9 +83,20 @@ class AdminController extends Controller
 
             $instance->$col = $dbPath;
             $instance->save();
+
+        } else {
+            // Створюємо новий запис з прив'язкою до батька
+            $data = [$col => $dbPath];
+
+            if ($parId && $parCol) {
+                $data[$parCol] = $parId; // напр. product_id => 42
+            }
+
+            $instance = $modelClass::create($data);
         }
 
         return response()->json([
+            'id'      => $instance->id,
             'path'    => $dbPath,
             'message' => 'Збережено успішно',
         ]);

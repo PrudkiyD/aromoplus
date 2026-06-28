@@ -25,9 +25,26 @@ class ImagesRelationManager extends RelationManager
                                                                 <a href='/catalog/product/{$record->id}' title='Переглянути сторінку товара'>
                                                                     <img src='/storage/{$record->image}' id='preview{$record->id}' style='max-height: 200px; border-radius: 8px;'>
                                                                 </a><br>
-                                                                <input type='file' name='import-main-img' data-preview='preview{$record->id}' data-model-id='{$record->id}' data-path='product-images' data-model='Catalog/Product' data-col='main_image'>
+                                                                <input type='file' 
+                                                                        name='import-main-img' 
+                                                                        data-preview='preview{$record->id}' 
+                                                                        data-model-id='{$record->id}' 
+                                                                        data-path='product-images' 
+                                                                        data-model='Catalog/ProductImage' 
+                                                                        data-col='image' 
+                                                                        data-par-id='{$record->product_id}' 
+                                                                        data-par-col='product_id'>
                                                             ")
-                        : 'Фото відсутнє'),
+                        : "<input type='file' 
+                            name='import-main-img' 
+                            data-preview='preview{$record->id}' 
+                            data-model-id='{$record->id}' 
+                            data-path='product-images' 
+                            data-model='Catalog/ProductImage' 
+                            data-col='image' 
+                            data-par-id='{$record->product_id}' 
+                            data-par-col='product_id'>
+                        "),
             ]);
     }
 

@@ -377,7 +377,9 @@ document.querySelectorAll('input[type="file"][data-path]').forEach(input => {
         formData.append('path', this.dataset.path);
         formData.append('model', this.dataset.model);
         formData.append('col', this.dataset.col);
-        formData.append('model_id', this.dataset.modelId ?? ''); // якщо є
+        formData.append('model_id', this.dataset.modelId ?? '');
+        formData.append('par_id',  this.dataset.parId  ?? '');
+        formData.append('par_col', this.dataset.parCol ?? '');
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
