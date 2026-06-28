@@ -35,10 +35,11 @@ class ImagesRelationManager extends RelationManager
                                                                         data-par-id='{$record->product_id}' 
                                                                         data-par-col='product_id'>
                                                             ")
-                        : "<input type='file' 
+                        : "<img src='/storage/{$record->image}' id='previewnew' style='max-height: 200px; border-radius: 8px;'>
+                            <input type='file' 
                             name='import-main-img' 
-                            data-preview='preview{$record->id}' 
-                            data-model-id='{$record->id}' 
+                            data-preview='previewnew' 
+                            data-model-id='' 
                             data-path='product-images' 
                             data-model='Catalog/ProductImage' 
                             data-col='image' 
