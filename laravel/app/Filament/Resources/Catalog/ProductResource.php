@@ -167,7 +167,7 @@ class ProductResource extends Resource
                                                                                 </a><br>
                                                                                 <input type='file' name='import-main-img' data-preview='preview{$record->id}' data-model-id='{$record->id}' data-path='product-images' data-model='Catalog/Product' data-col='main_image'>
                                                                             ")
-                                        : "<input type='file' name='import-main-img' data-preview='preview{$record->id}' data-model-id='{$record->id}' data-path='product-images' data-model='Catalog/Product' data-col='main_image'>"),
+                                        : 'Фото відсутнє'),
                             ]),
                             
                         Forms\Components\Section::make('Статус та Категорії')
