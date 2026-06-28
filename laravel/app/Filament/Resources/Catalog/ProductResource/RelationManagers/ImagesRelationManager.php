@@ -48,10 +48,6 @@ class ImagesRelationManager extends RelationManager
                     ->label('Фото')
                     ->size(75)
                     ->getStateUsing(fn ($record) => asset('/storage/' . $record->image)),
-                    
-                Tables\Columns\TextColumn::make('image')
-                    ->label('Шлях')
-                    ->limit(50),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
