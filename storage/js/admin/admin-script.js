@@ -402,7 +402,7 @@ document.querySelectorAll('input[type="file"][data-path]').forEach(input => {
             }
 
             alert('Зображення збережено:', data.path);
-            document.querySelector('#preview').src = '/storage/' + data.path;
+            document.querySelector(`${this.dataset.preview}`).src = '/storage/' + data.path;
         } catch (e) {
             console.error('Fetch error:', e);
         }
