@@ -400,7 +400,6 @@ window.addEventListener('click', function(el){
                     return;
                 }
 
-                alert('Зображення збережено!');
                 document.querySelector(`#${this.dataset.preview}`).src = '/storage/' + data.path;
             } catch (e) {
                 console.error('Fetch error:', e);
