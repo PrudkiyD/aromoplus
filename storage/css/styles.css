@@ -806,6 +806,10 @@ footer ul{
     justify-content: space-between;
 }
 
+.info-product-basket div{
+    display: flex;
+}
+
 
 
 /*-------------------------------------------------*/
