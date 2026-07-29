@@ -821,9 +821,11 @@ footer ul{
     width: 100%;
     display: none;
     background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 10px 50px;
     height: 65px;
     z-index: 88;
+    margin: 5px;
+    border-radius: 10px;
 }
 
 .mobileDoc ul{
