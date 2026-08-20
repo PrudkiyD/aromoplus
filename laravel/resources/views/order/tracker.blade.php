@@ -42,7 +42,7 @@ $STATUS_CHOICES = array(
         <li>Номер телефону: <strong>{{ $order->phone_number}}</strong></li>
         <li>Тип оплати: <strong>{{ $PAY_CHOICES[$order->payment_type] }}</strong></li>
         <li>Доставка: <strong>{{ $DELIVERY_CHOICES[$order->delivery] }}</strong></li>
-        <li>ТТН: <strong>{{ $DELIVERY_CHOICES[$order->ttn] }}</strong></li>
+        <li>ТТН: <strong>{{ $order->ttn }}</strong></li>
         <li>Адреса: <strong>{{ $order->city}}</strong></li>
         <hr>
         <li class="prodItems" style="list-style: none;">
