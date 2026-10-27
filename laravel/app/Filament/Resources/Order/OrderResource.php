@@ -213,7 +213,7 @@ class OrderResource extends Resource
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Дата')
-                    ->dateTime('d.m.Y H:i')
+                    ->dateTime('d.m.Y H:i', 'Europe/Kyiv')
                     ->sortable()
                     ->lineClamp(2)
                     ->wrap(),
