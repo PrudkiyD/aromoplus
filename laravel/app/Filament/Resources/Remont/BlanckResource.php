@@ -31,6 +31,7 @@ class BlanckResource extends Resource
                             ->placeholder('Автоматично, якщо порожньо'),
                         Forms\Components\DateTimePicker::make('data')
                             ->label('Дата')
+                            ->timezone('Europe/Kyiv')
                             ->default(now())
                             ->required(),
                         Forms\Components\Select::make('status')

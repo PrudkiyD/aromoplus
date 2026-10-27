@@ -88,6 +88,7 @@ class FeedbackResource extends Resource
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Дата')
+                    ->timezone('Europe/Kyiv')
                     ->dateTime('d.m.Y H:i')
                     ->sortable(),
             ])
