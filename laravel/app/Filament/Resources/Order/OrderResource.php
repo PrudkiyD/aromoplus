@@ -51,11 +51,11 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('created_at')
                                     ->label('Дата створення')
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state) => $state ? \Illuminate\Support\Carbon::parse($state)->format('d.m.Y H:i') : '-'),    
+                                    ->formatStateUsing(fn ($state) => $state ? \Illuminate\Support\Carbon::parse($state)->format('d.m.Y H:i', 'Europe/Kyiv') : '-'),    
                                 Forms\Components\TextInput::make('updated_at')
                                     ->label('Дата оновлення')
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state) => $state ? \Illuminate\Support\Carbon::parse($state)->format('d.m.Y H:i') : '-'),
+                                    ->formatStateUsing(fn ($state) => $state ? \Illuminate\Support\Carbon::parse($state)->format('d.m.Y H:i', 'Europe/Kyiv') : '-'),
                                 Forms\Components\Textarea::make('comment')
                                     ->label('Коментар клієнта'),
 

@@ -98,7 +98,7 @@ class BlanckResource extends Resource
                     ->options(Blanck::STATUSES),
                 Tables\Columns\TextColumn::make('data')
                     ->label('Дата')
-                    ->dateTime('d.m.Y H:i')
+                    ->dateTime('d.m.Y H:i', 'Europe/Kyiv')
                     ->sortable(),
             ])
             ->modifyQueryUsing(fn ($query) => 
